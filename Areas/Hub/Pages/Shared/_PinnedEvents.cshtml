@@ -1,0 +1,16 @@
+﻿@using LetsGame.Data.Models
+@model List<LetsGame_UserEvent>
+
+<div class="card-group">
+	@foreach (LetsGame_UserEvent ue in Model) {
+		<div class="card">
+			<img src="..." class="card-img-top" alt="...">
+			<div class="card-body">
+				<h5 class="card-title">@ue.Event.EventName</h5>
+				<p class="card-text">@ue.Event.Description</p>
+				<p class="card-text"><small class="text-muted">Date: @ue.Event.EventDateTime</small></p>
+			</div>
+		</div>
+	}
+</div>
+

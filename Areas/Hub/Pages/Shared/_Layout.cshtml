@@ -1,0 +1,43 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using LetsGame.Areas.Identity.Data;
+
+@inject SignInManager<LetsGame_User> SignInManager
+@inject UserManager<LetsGame_User> UserManager
+
+@{
+    if (ViewData.TryGetValue("ParentLayout",out var parentLayout)) {
+        Layout = (string)parentLayout;
+    }
+    else {
+        Layout = "/Pages/Shared/_Layout.cshtml";
+    }
+
+    LetsGame_User lgu = await UserManager.GetUserAsync(User);
+}
+
+<div>
+    <div class="row">
+        <div class="text-center text-light">
+	        <div class="bg-dark rounded-3 p-5">
+		        <h1 class="display-4">Welcome to you Hub</h1>
+	        </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <partial name="_HubLeftPanel" />
+        </div>
+        <div class="col-md-9">
+            <div class="row">
+                <partial name="_HubNav">
+            </div>
+            <div class="row">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

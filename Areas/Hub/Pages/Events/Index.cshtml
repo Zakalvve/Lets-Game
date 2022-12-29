@@ -1,0 +1,45 @@
+﻿@page "{eventID:long?}"
+@using LetsGame.Data.Models;
+@using LetsGame.Areas.Identity.Data;
+@using LetsGame.Areas.Hub.Models;
+@using System.Globalization;
+@model LetsGame.Areas.Hub.Pages.EventModel
+@{
+	ViewData["Title"] = @Model.EventName;
+}
+
+<div class="row">
+	<h1>@Model.EventName</h1>
+</div>
+<partial name="_StatusMessage" model="Model.EventsModel.StatusMessage" />
+
+
+<!--A partial for rendering a list of events consitantly-->
+@if (!Model.EventsModel.IsValid) {
+	//this model is not valid when there is neither a single event nor event list to display
+	//In this case we will notify the user that they have no Events and offer them the option to create a new event
+	<div>
+		Uh-oh, looks like you haven't made any events. Click the add event button to get started.
+	</div>
+	<partial name="Controls/_UpdateEvent" model="@new ControlModel_EventData(null, Model.EventsModel.SourceURL)" />
+}
+else if (Model.EventsModel.IsSingle && Model.EventsModel.DisplaySingles) {
+
+	//the event that we will display
+	LetsGame_UserEvent ue = Model.EventsModel.GetSingle();
+
+	@if (ue != null) {
+		<partial name="_SingleEvent" model="new PartialModel_SingleEvent(ue, Model.EventsModel.SourceURL)" />
+	}
+}
+else {
+	if (Model.EventsModel.HasPinnedEvents) {
+		<partial name="_PinnedEvents" model="Model.EventsModel.PinnedEvents" />
+	}
+	<partial name="_EventList" model="new PartialModel_EventList(Model.EventsModel.UserEvents, Model.EventsModel.SourceURL)" />
+}
+
+
+@{
+	//be inspired by github ui
+}

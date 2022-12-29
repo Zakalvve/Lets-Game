@@ -1,0 +1,13 @@
+﻿@using LetsGame.Areas.Identity.Data
+@inject UserManager<LetsGame_User> UserManager
+
+@{
+	var user = await UserManager.GetUserAsync(User);
+}
+
+<div class="row justify-content-center">
+	<img class="p-3 img-fluid" src="/Resources/DefaultProfilePicure.jpg"/>
+</div>
+<div class="row">
+	<h3 class="lead">@user.UserName</h3>
+</div>

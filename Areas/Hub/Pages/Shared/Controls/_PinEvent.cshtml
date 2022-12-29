@@ -1,0 +1,8 @@
+﻿@using LetsGame.Areas.Hub.Models
+@model ControlModel_PinEvent
+
+<div class="p-2">
+	<form method="post" asp-area="Hub" asp-page="/Events/Index" asp-page-handler="TogglePinned" asp-route-eventID="@Model.EventID" asp-route-returnUrl="@Model.ReturnURL">
+		<button class="btn @(Model.IsPinned ? "btn-primary" : "btn-outline-primary")" type="submit">@(Model.IsPinned ? "Unpin" : "Pin It!")</button>
+	</form>
+</div>

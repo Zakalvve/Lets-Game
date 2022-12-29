@@ -1,0 +1,6 @@
+﻿@using LetsGame.Areas.Hub.Models
+@model ControlModel_EventData
+
+<div class="p-2">
+	<a class="btn btn-danger" asp-area="Hub" asp-page="/Events/Delete" asp-route-eventID="@Model.EventID" asp-route-returnUrl="@Model.ReturnURL">Delete</a>
+</div>

@@ -1,0 +1,21 @@
+﻿@page
+@model LetsGame.Areas.Hub.Pages.Events.DeleteModel
+@{
+	ViewData["Title"] = "Delete Event: Are you sure?";
+}
+
+<h1> Are you sure you want to delete event: @Model.Event.EventName?</h1>
+<p>If you do all friends who are currently attending will be removed. If you want to leave you can instead promote someone else to be the event owner.</p>
+
+<!--Button to Delete, Button to Cancel/Back, Button to Configure Event Owner-->
+<div class=" d-inline-flex row">
+	<a class="btn btn-outline-success">Promote Friend</a>
+	<form method="post" asp-page="/Events/Delete" asp-route-returnUrl="@Model.ReturnURL">
+		<button type="submit" class="btn btn-danger" asp-page-handler="Delete" asp-route-eventID="@Model.Event.ID" asp-route-returnUrl="@Model.ReturnURL">
+			Delete
+		</button>
+		<button type="submit" class="btn btn-primary">
+			Cancel
+		</button>
+	</form>
+</div>
