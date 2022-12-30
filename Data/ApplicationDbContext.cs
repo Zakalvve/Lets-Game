@@ -53,9 +53,6 @@ namespace LetsGame.Data
                     b.Property(e => e.EventDateTime)
                         .IsRequired();
 
-                    b.Property(e => e.GameSubmissionsDeadline)
-                        .IsRequired();
-
                     b.Property(e => e.EventName)
                         .IsRequired();
 
@@ -82,7 +79,7 @@ namespace LetsGame.Data
                             join.Property(ue => ue.IsCreator);
 
                             join.HasKey(k => new { k.UserID,k.EventID });
-                            join.ToTable("UserEvents");
+                            join.ToTable("LetsGameUserEvents");
                         });
 
                     b.HasOne(e => e.Poll)
@@ -94,6 +91,11 @@ namespace LetsGame.Data
             builder.Entity<LetsGame_Poll>(
                 b => {
                     b.Property(p => p.ID)
+                        .IsRequired();
+
+                    b.Property(p => p.Name);
+
+                    b.Property(p => p.PollStart)
                         .IsRequired();
 
                     b.Property(p => p.PollDeadline)

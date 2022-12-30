@@ -9,7 +9,6 @@ namespace LetsGame.Data.Models
 
         public LetsGame_Event(DateTime eventDate,DateTime subDeadline) {
             EventDateTime = eventDate;
-            GameSubmissionsDeadline = subDeadline;
             EventName = "Default Name";
             Description = "Default Description...";
             Location = "Default Location";
@@ -28,7 +27,5 @@ namespace LetsGame.Data.Models
 
         public string Location { get; set; }
         public DateTime EventDateTime { get; set; }
-        public DateTime GameSubmissionsDeadline { get; set; }
-
     }
 }

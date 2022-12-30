@@ -26,10 +26,6 @@
 				<input asp-for="Event.Location" class="form-control" />
 				<label asp-for="Event.Location" class="form-label">Event Location</label>
 			</div>
-			<div class="form-floating">
-				<input asp-for="Event.GameSubmissionsDeadline" class="form-control" />
-				<label asp-for="Event.GameSubmissionsDeadline" class="form-label">Game Submission Deadline</label>
-			</div>
 			<input type="hidden" asp-for="Event.ID" />
 			<input type="hidden" asp-for="Event.Poll" />
 			<button type="submit" class="btn btn-primary">@(Model.IsCreate ? "Create" : "Save")</button>
