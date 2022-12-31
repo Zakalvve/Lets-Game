@@ -4,13 +4,43 @@
 
 namespace LetsGame.Data.Migrations
 {
-    public partial class AddedPollVotingModel : Migration
+    public partial class AddUserRelationshipsAndPollVoting : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
                 name: "Votes",
                 table: "LetsGamePollOptions");
+
+            migrationBuilder.AddColumn<string>(
+                name: "Bio",
+                table: "AspNetUsers",
+                type: "nvarchar(max)",
+                nullable: true);
+
+            migrationBuilder.CreateTable(
+                name: "LetsGameFriends",
+                columns: table => new
+                {
+                    RequesterID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    AddresseeID = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LetsGameFriends", x => new { x.RequesterID, x.AddresseeID });
+                    table.ForeignKey(
+                        name: "FK_LetsGameFriends_AspNetUsers_AddresseeID",
+                        column: x => x.AddresseeID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_LetsGameFriends_AspNetUsers_RequesterID",
+                        column: x => x.RequesterID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
 
             migrationBuilder.CreateTable(
                 name: "LetsGamePollVotes",
@@ -43,6 +73,11 @@ namespace LetsGame.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_LetsGameFriends_AddresseeID",
+                table: "LetsGameFriends",
+                column: "AddresseeID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_LetsGamePollVotes_PollID",
                 table: "LetsGamePollVotes",
                 column: "PollID");
@@ -56,7 +91,14 @@ namespace LetsGame.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "LetsGameFriends");
+
+            migrationBuilder.DropTable(
                 name: "LetsGamePollVotes");
+
+            migrationBuilder.DropColumn(
+                name: "Bio",
+                table: "AspNetUsers");
 
             migrationBuilder.AddColumn<int>(
                 name: "Votes",

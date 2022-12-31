@@ -15,6 +15,8 @@ namespace LetsGame.Data
         public DbSet<LetsGame_Poll> dbPolls { get; set; }
         public DbSet<LetsGame_PollOption> dbPollOptions { get; set; }
         public DbSet<LetsGame_UserEvent> dbUserEvents { get; set; }
+        public DbSet<LetsGame_UserPollVote> dbPollVotes { get; set; }
+        public DbSet<LetsGame_Relationship> dbUserRelationships { get; set; }
 
 
         #region Required
@@ -24,6 +26,9 @@ namespace LetsGame.Data
 
             builder.Entity<LetsGame_User>(
                 b => {
+                    b.Property(user => user.Bio)
+                        .IsRequired(false);
+
                     b.HasMany(user => user.Events)
                         .WithMany(e => e.Participants)
                         .UsingEntity<LetsGame_UserEvent>(
@@ -43,6 +48,24 @@ namespace LetsGame.Data
                             join.HasKey(k => new { k.UserID,k.EventID });
                             join.ToTable("UserEvents");
                         });
+
+                    b.Ignore(user => user.Friends);
+                });
+
+            builder.Entity<LetsGame_Relationship>(
+                b => {
+                    b.HasOne(r => r.Requester)
+                        .WithMany(user => user.RelationshipsAsRequester)
+                        .HasForeignKey(r => r.RequesterID)
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne(r => r.Addressee)
+                        .WithMany(user => user.RelationshipsAsAddressee)
+                        .HasForeignKey(r => r.AddresseeID);
+
+                    b.HasKey(k => new { k.RequesterID,k.AddresseeID });
+
+                    b.ToTable("LetsGameFriends");
                 });
 
             builder.Entity<LetsGame_Event>(
@@ -127,16 +150,37 @@ namespace LetsGame.Data
                     b.Property(po => po.Game)
                         .IsRequired();
 
-                    b.Property(po => po.Votes)
-                        .IsRequired();
-
                     b.HasKey(po => po.ID);
 
                     b.HasOne(po => po.Poll)
                         .WithMany(p => p.PollOptions)
                         .HasForeignKey(po => po.PollID);
 
+                    b.Ignore(po => po.Votes);
+
                     b.ToTable("LetsGamePollOptions");
+                });
+
+            builder.Entity<LetsGame_UserPollVote>(
+                b => {
+
+                    b.HasOne(upv => upv.Voter)
+                        .WithMany(user => user.UserVotes)
+                        .HasForeignKey(upv => upv.VoterID);
+
+                    b.HasOne(upv => upv.Poll)
+                        .WithMany(p => p.PollVotes)
+                        .HasForeignKey(upv => upv.PollID);
+
+                    b.HasOne(upv => upv.PollOption)
+                        .WithMany(po => po.OptionVotes)
+                        .HasForeignKey(upv => upv.PollOptionID);
+
+                    b.HasKey(k => new { k.VoterID,k.PollID });
+
+                    b.Ignore(upv => upv.HasVoted);
+
+                    b.ToTable("LetsGamePollVotes");
                 });
         }
         #endregion

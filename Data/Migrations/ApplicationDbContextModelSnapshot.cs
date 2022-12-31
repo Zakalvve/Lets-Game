@@ -30,6 +30,9 @@ namespace LetsGame.Data.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<string>("Bio")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -160,14 +163,26 @@ namespace LetsGame.Data.Migrations
                     b.Property<long>("PollID")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("Votes")
-                        .HasColumnType("int");
-
                     b.HasKey("ID");
 
                     b.HasIndex("PollID");
 
                     b.ToTable("LetsGamePollOptions", (string)null);
+                });
+
+            modelBuilder.Entity("LetsGame.Data.Models.LetsGame_Relationship", b =>
+                {
+                    b.Property<string>("RequesterID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AddresseeID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("RequesterID", "AddresseeID");
+
+                    b.HasIndex("AddresseeID");
+
+                    b.ToTable("LetsGameFriends", (string)null);
                 });
 
             modelBuilder.Entity("LetsGame.Data.Models.LetsGame_UserEvent", b =>
@@ -189,6 +204,26 @@ namespace LetsGame.Data.Migrations
                     b.HasIndex("EventID");
 
                     b.ToTable("LetsGameUserEvents", (string)null);
+                });
+
+            modelBuilder.Entity("LetsGame.Data.Models.LetsGame_UserPollVote", b =>
+                {
+                    b.Property<string>("VoterID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<long>("PollID")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("PollOptionID")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("VoterID", "PollID");
+
+                    b.HasIndex("PollID");
+
+                    b.HasIndex("PollOptionID");
+
+                    b.ToTable("LetsGamePollVotes", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -350,6 +385,25 @@ namespace LetsGame.Data.Migrations
                     b.Navigation("Poll");
                 });
 
+            modelBuilder.Entity("LetsGame.Data.Models.LetsGame_Relationship", b =>
+                {
+                    b.HasOne("LetsGame.Areas.Identity.Data.LetsGame_User", "Addressee")
+                        .WithMany("RelationshipsAsAddressee")
+                        .HasForeignKey("AddresseeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LetsGame.Areas.Identity.Data.LetsGame_User", "Requester")
+                        .WithMany("RelationshipsAsRequester")
+                        .HasForeignKey("RequesterID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Addressee");
+
+                    b.Navigation("Requester");
+                });
+
             modelBuilder.Entity("LetsGame.Data.Models.LetsGame_UserEvent", b =>
                 {
                     b.HasOne("LetsGame.Data.Models.LetsGame_Event", "Event")
@@ -367,6 +421,31 @@ namespace LetsGame.Data.Migrations
                     b.Navigation("Event");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("LetsGame.Data.Models.LetsGame_UserPollVote", b =>
+                {
+                    b.HasOne("LetsGame.Data.Models.LetsGame_Poll", "Poll")
+                        .WithMany("PollVotes")
+                        .HasForeignKey("PollID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LetsGame.Data.Models.LetsGame_PollOption", "PollOption")
+                        .WithMany("OptionVotes")
+                        .HasForeignKey("PollOptionID");
+
+                    b.HasOne("LetsGame.Areas.Identity.Data.LetsGame_User", "Voter")
+                        .WithMany("UserVotes")
+                        .HasForeignKey("VoterID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Poll");
+
+                    b.Navigation("PollOption");
+
+                    b.Navigation("Voter");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -422,7 +501,13 @@ namespace LetsGame.Data.Migrations
 
             modelBuilder.Entity("LetsGame.Areas.Identity.Data.LetsGame_User", b =>
                 {
+                    b.Navigation("RelationshipsAsAddressee");
+
+                    b.Navigation("RelationshipsAsRequester");
+
                     b.Navigation("UserEvents");
+
+                    b.Navigation("UserVotes");
                 });
 
             modelBuilder.Entity("LetsGame.Data.Models.LetsGame_Event", b =>
@@ -435,6 +520,13 @@ namespace LetsGame.Data.Migrations
             modelBuilder.Entity("LetsGame.Data.Models.LetsGame_Poll", b =>
                 {
                     b.Navigation("PollOptions");
+
+                    b.Navigation("PollVotes");
+                });
+
+            modelBuilder.Entity("LetsGame.Data.Models.LetsGame_PollOption", b =>
+                {
+                    b.Navigation("OptionVotes");
                 });
 #pragma warning restore 612, 618
         }

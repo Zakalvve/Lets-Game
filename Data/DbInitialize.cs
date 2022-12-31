@@ -13,6 +13,22 @@ namespace LetsGame.Data
 	//this way I always work from a proper state after migrations
 	public static class DbInitialize {
 		public static void Initialize(ApplicationDbContext context) {
+
+			//var user = context.Users.Find("94df1db0-c13f-4080-816c-8358a94f4a2e");
+   //         var poll = context.dbPolls.Find((long)33);
+			//var pollOption = context.dbPollOptions.Find((long)4);
+
+			//LetsGame_UserPollVote vote = new LetsGame_UserPollVote();
+
+			//vote.Voter = user;
+			//vote.Poll = poll;
+			//vote.PollOption = pollOption;
+
+			//context.dbPollVotes.Add(vote);
+
+			//context.SaveChanges();
+			 
+
 			//var pinnedEvents = context.dbUserEvents.Include(ue => ue.Event).Where(ue => ue.UserID == "94df1db0-c13f-4080-816c-8358a94f4a2e").Select(ue => new { ue.Event,ue.IsPinned }).ToList();
 			//context.Database.EnsureCreated();
 

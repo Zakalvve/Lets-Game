@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LetsGame.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221231135336_Added-Poll-Voting-Model")]
-    partial class AddedPollVotingModel
+    [Migration("20221231143552_Add-User-Relationships-And-Poll-Voting")]
+    partial class AddUserRelationshipsAndPollVoting
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -31,6 +31,9 @@ namespace LetsGame.Data.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
+
+                    b.Property<string>("Bio")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()

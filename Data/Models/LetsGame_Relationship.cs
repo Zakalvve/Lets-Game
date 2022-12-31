@@ -4,9 +4,9 @@ namespace LetsGame.Data.Models
 {
     public class LetsGame_Relationship
     {
-        public long RequesterID { get; set; }
-        public LetsGame_User Requester { get; set; }
-        public long AddresseeID { get; set; }
-        public LetsGame_User Addressee { get; set; }
+        public string RequesterID { get; set; }
+        public virtual LetsGame_User Requester { get; set; }
+        public string AddresseeID { get; set; }
+        public virtual LetsGame_User Addressee { get; set; }
     }
 }

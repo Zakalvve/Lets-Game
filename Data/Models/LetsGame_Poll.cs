@@ -21,5 +21,6 @@
         public DateTime PollDeadline { get; set; }
 
         public virtual List<LetsGame_PollOption> PollOptions { get; set; } = new List<LetsGame_PollOption>();
+        public virtual List<LetsGame_UserPollVote> PollVotes { get; set; } = new List<LetsGame_UserPollVote>();
     }
 }
