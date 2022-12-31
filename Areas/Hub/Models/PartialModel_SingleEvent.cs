@@ -17,7 +17,7 @@ namespace LetsGame.Areas.Hub.Models
 		public LetsGame_Poll Poll { get; private set; }
 		public string EventDate { 
 			get {
-				return $"{Event.EventDateTime.ToString("d",CultureInfo.GetCultureInfo("es-ES"))} @@ {Event.EventDateTime.ToString("t",CultureInfo.GetCultureInfo("es-ES"))}";
+				return $"{Event.EventDateTime.ToString("d",CultureInfo.GetCultureInfo("es-ES"))} @ {Event.EventDateTime.ToString("t",CultureInfo.GetCultureInfo("es-ES"))}";
 			}
 		}
 		public string TimeToEvent {

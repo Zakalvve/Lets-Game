@@ -1,0 +1,20 @@
+﻿@page
+@model LetsGame.Areas.Hub.Pages.Friends.IndexModel
+@{
+	ViewData["Title"] = "Friends";
+}
+
+<div class="d-flex flex-row" style="height:100%;">
+	<!--Friends List-->
+	<div class="col-4" style="flex:1 1 auto;">
+		@foreach (string friend in Model.Friends) {
+			<div class="row">
+				<h3 class="lead">@friend</h3>
+			</div>
+		}
+	</div>
+	<!--Chat-->
+	<div class="col-8" style=" flex:1 1 auto;">
+
+	</div>
+</div>
