@@ -1,19 +1,26 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+
+html, body {
+    height: 100%;
 }
 
-body {
-  margin-bottom: 60px;
-  min-height: 100%;
+.site-root {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    height: 100%;
+}
+
+#site-footer {
+    position: static;
 }

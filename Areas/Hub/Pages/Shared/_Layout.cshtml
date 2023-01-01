@@ -15,25 +15,24 @@
     LetsGame_User lgu = await UserManager.GetUserAsync(User);
 }
 
-<div>
-    <div class="row">
-        <div class="text-center text-light">
-	        <div class="bg-dark rounded-3 p-5">
-		        <h1 class="display-4">Welcome to you Hub</h1>
-	        </div>
-        </div>
+<div class="row justify-content-center text-center text-light">
+    <div class="col">
+	    <div class="bg-dark rounded-3 p-5">
+		    <h1 class="display-4">Welcome to you Hub</h1>
+	    </div>
     </div>
-    <div class="row">
-        <div class="col-md-3">
-            <partial name="_HubLeftPanel" />
+</div>
+
+<div class="row justify-content-center flex-grow-1">
+    <div class="d-flex col-3 flex-column h-100">
+        <partial name="_HubLeftPanel" />
+    </div>
+    <div class="d-flex col-9 flex-column h-100">
+        <div class="row">
+            <partial name="_HubNav">
         </div>
-        <div class="col-md-9">
-            <div class="row">
-                <partial name="_HubNav">
-            </div>
-            <div class="row">
-                @RenderBody()
-            </div>
+        <div class="row flex-grow-1">
+            @RenderBody()
         </div>
     </div>
 </div>

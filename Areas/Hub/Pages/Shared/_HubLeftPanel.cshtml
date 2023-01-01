@@ -6,8 +6,12 @@
 }
 
 <div class="row justify-content-center">
-	<img class="p-3 img-fluid" src="/Resources/DefaultProfilePicure.jpg"/>
+	<div class="col">
+		<img class="img-fluid" src="/Resources/DefaultProfilePicure.jpg"/>
+	</div>
 </div>
-<div class="row">
-	<h3 class="lead">@user.UserName</h3>
+<div class="row flex-grow-1">
+	<div class="col">
+		<h3 class="lead">@user.UserName</h3>
+	</div>
 </div>

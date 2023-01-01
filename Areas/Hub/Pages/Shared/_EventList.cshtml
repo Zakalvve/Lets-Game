@@ -5,43 +5,48 @@
 @model PartialModel_EventList
 
 <!--A partial for rendering a list of events consitantly-->
-<div class="row m-3">
-	<div class="d-flex row border border-dark bg-light shadow-sm text-dark">
-		<div class="col-8 d-flex flex-row">
-			<div class="p-2" style="flex:1 0 15%">
-				Event
-			</div>
-			<div class="p-2" style="flex:1 0 15%">
-				Location
-			</div>
-			<div class="p-2" style="flex:1 0 15%">
-				When
-			</div>
-		</div>
-		<div class="col-4 d-flex flex-row-reverse">
-			<partial name="Controls/_UpdateEvent" model="@new ControlModel_EventData(null, Model.CurrentPage)" />
-		</div>
-	</div>
-	@foreach (LetsGame_UserEvent ue in Model.UserEvents) {
-		<div class="d-flex row border-end border-start border-bottom border-primary">
-			<div class="col-8 d-flex flex-row">
-				<div class="p-2" style="flex:1 0 15%">
-					<a asp-page="/Events/Index" asp-route-eventID=@ue.EventID>@ue.Event.EventName</a>
+<div class="row mx-0">
+	<div class="col flex-column">
+		<div class="d-flex row border border-dark bg-light shadow-sm text-dark">
+			<div class="col-8 d-flex">
+				<div class="p-2 d-flex align-items-center" style="flex:1 0 15%">
+					<div>Event</div>
 				</div>
-				<div class="p-2" style="flex:1 0 15%">
-					@ue.Event.Location
+				<div class="p-2 d-flex align-items-center" style="flex:1 0 15%">
+					<div>Location</div>
 				</div>
-				<div class="p-2" style="flex:1 0 15%">
-					@ue.Event.EventDateTime
+				<div class="p-2 d-flex align-items-center" style="flex:1 0 15%">
+					<div>When</div>
 				</div>
 			</div>
 			<div class="col-4 d-flex flex-row-reverse">
-				<partial name="Controls/_PinEvent" model="@new ControlModel_PinEvent(ue.IsPinned, ue.EventID, Model.CurrentPage)"/>
-				@if(ue.IsCreator){
-					<partial name="Controls/_DeleteEvent" model="@new ControlModel_EventData(ue.EventID, Model.CurrentPage)" />
-					<partial name="Controls/_UpdateEvent" model="@new ControlModel_EventData(ue.EventID, Model.CurrentPage)" />
-				}
+				<partial name="Controls/_UpdateEvent" model="@new ControlModel_EventData(null, Model.CurrentPage)" />
 			</div>
 		</div>
-	}
+		@foreach (LetsGame_UserEvent ue in Model.UserEvents) {
+			<div class="d-flex row border-end border-start border-bottom border-primary">
+				<div class="col-8 d-flex flex-row">
+					@if(ue.IsCreator){
+						<partial name="Controls/_EventDropdownControls" model="@new ControlModel_EventData(ue.EventID, Model.CurrentPage)" />
+					}
+					<div class="p-2 d-flex align-items-center" style="flex:1 0 15%">
+						<a asp-page="/Events/Index" asp-route-eventID=@ue.EventID>@ue.Event.EventName</a>
+					</div>
+					<div class="p-2 d-flex align-items-center" style="flex:1 0 15%">
+						<div>
+							@ue.Event.Location
+						</div>
+					</div>
+					<div class="p-2 d-flex align-items-center" style="flex:1 0 15%">
+						<div>
+							@ue.Event.EventDateTime
+						</div>
+					</div>
+				</div>
+				<div class="col-4 d-flex flex-row-reverse">
+					<partial name="Controls/_PinEvent" model="@new ControlModel_PinEvent(ue.IsPinned, ue.EventID, Model.CurrentPage)"/>
+				</div>
+			</div>
+		}
+	</div>
 </div>

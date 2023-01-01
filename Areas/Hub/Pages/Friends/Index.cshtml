@@ -4,17 +4,35 @@
 	ViewData["Title"] = "Friends";
 }
 
-<div class="d-flex flex-row" style="height:100%;">
-	<!--Friends List-->
-	<div class="col-4" style="flex:1 1 auto;">
-		@foreach (string friend in Model.Friends) {
-			<div class="row">
-				<h3 class="lead">@friend</h3>
+<!--Friends List-->
+<div class="row mx-0" style="max-height:580px;"> @*Need to change the max height here!*@
+	<div class="d-flex col-4 flex-column h-100 border border-dark">
+		<div class="row py-2">
+			<div class="col">
+				<ul class="nav nav-tabs">
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="#">Friends</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">Friend Requests</a>
+					</li>
+				</ul>
 			</div>
-		}
+		</div>
+		<div class="row flex-grow-1 overflow-auto">
+			<div class="col flex-column">
+				<ul class="list-group-flush" style="padding: 0;">
+					@foreach (string friend in Model.Friends) {
+						<li class="list-group-item">
+							<h3 class="col lead">@friend</h3>
+						</li>
+					}
+				</ul>
+			</div>
+		</div>
 	</div>
 	<!--Chat-->
-	<div class="col-8" style=" flex:1 1 auto;">
+	<div class="col-8 flex-column h-100 border-top border-end border-bottom border-dark">
 
 	</div>
 </div>
