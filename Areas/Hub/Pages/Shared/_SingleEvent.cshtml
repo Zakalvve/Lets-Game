@@ -31,6 +31,7 @@
 
 @if (Model.HasPoll)
 {
+	//for polls we need controls to add poll, add game, delete poll, edit poll, vote for option
 	<h3>@Model.Poll.PollDeadline</h3>
 	<div class="row mx-0 my-4">
 		<div class="col flex-column">
@@ -42,6 +43,9 @@
 					<div class="p-2" style="flex:1 0 25%">
 						Votes
 					</div>
+				</div>
+				<div class="col-4 d-flex flex-row-reverse">
+					<a class="btn btn-danger" asp-area="Hub" asp-page="/Polls/Delete" asp-route-pollID="@Model.Poll.ID" asp-route-returnUrl="@Model.CurrentPage">Delete Poll</a>
 				</div>
 			</div>
 			@foreach (LetsGame_PollOption po in Model.Poll.PollOptions)
@@ -60,24 +64,20 @@
 					</div>
 				</div>
 			}
-			@if (Model.UserEvent.IsCreator)
-			{
-				<form class="d-flex row border-end border-start border-bottom border-dark text-dark" method="post" asp-area="Hub" asp-page="/Events/Index" asp-page-handler="AddPollGame" asp-route-pollID="@Model.Poll.ID" asp-route-returnUrl="@Model.CurrentPage">
-					<div class="col-8 d-flex flex-row">
-						<div class="p-2" style="flex:1 0 25%">
-							<input type="text" name="gameName" value="Enter Game Name">
-						</div>
-					</div>
-					<div class="col-4 d-flex flex-row-reverse">
-						<button class="btn btn-outline-dark" type="submit">Add New Game</button>
-					</div>
-				</form>
-			}
 		</div>
 	</div>
-	<div class="d-flex flex-row-reverse">
-		<a class="btn btn-danger" asp-area="Hub" asp-page="/Polls/Delete" asp-route-pollID="@Model.Poll.ID" asp-route-returnUrl="@Model.CurrentPage">Delete</a>
-	</div>
+	@if (Model.UserEvent.IsCreator) {
+			<form class="d-flex row" method="post" asp-area="Hub" asp-page="/Events/Index" asp-page-handler="AddPollGame" asp-route-pollID="@Model.Poll.ID" asp-route-returnUrl="@Model.CurrentPage">
+				<div class="col-8 d-flex flex-row">
+					<div class="p-2" style="flex:1 0 25%">
+						<input type="text" name="gameName" value="Enter Game Name">
+					</div>
+				</div>
+				<div class="col-4 d-flex flex-row-reverse">
+					<button class="btn btn-outline-dark" type="submit">Add New Game</button>
+				</div>
+			</form>
+	}
 }
 else {
 	<div class="row mx-0 my-4">
