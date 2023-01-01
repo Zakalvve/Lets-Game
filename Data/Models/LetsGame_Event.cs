@@ -5,9 +5,9 @@ namespace LetsGame.Data.Models
 {
     public class LetsGame_Event
     {
-        public LetsGame_Event() : this(DateTime.Now,DateTime.Now) { }
+        public LetsGame_Event() : this(DateTime.Now) { }
 
-        public LetsGame_Event(DateTime eventDate,DateTime subDeadline) {
+        public LetsGame_Event(DateTime eventDate) {
             EventDateTime = eventDate;
             EventName = "Default Name";
             Description = "Default Description...";

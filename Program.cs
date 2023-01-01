@@ -28,7 +28,7 @@ if (app.Environment.IsDevelopment()) {
     app.UseMigrationsEndPoint();
     using (var scope = app.Services.CreateScope()) {
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        DbInitialize.Initialize(db); //uncomment to initialise the database with dummy data
+        //DbInitialize.Initialize(db); //uncomment to initialise the database with dummy data
     }
 }
 else {

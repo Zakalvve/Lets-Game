@@ -14,49 +14,58 @@ namespace LetsGame.Data
 	public static class DbInitialize {
 		public static void Initialize(ApplicationDbContext context) {
 
-			//var user = context.Users.Find("94df1db0-c13f-4080-816c-8358a94f4a2e");
-   //         var poll = context.dbPolls.Find((long)33);
-			//var pollOption = context.dbPollOptions.Find((long)4);
+			foreach (LetsGame_User user in context.Users) {
 
-			//LetsGame_UserPollVote vote = new LetsGame_UserPollVote();
+				//Make friends
+				foreach(LetsGame_User otherUser in context.Users) {
+					if (otherUser.UserName == user.UserName || AreFriends(user, otherUser)) continue;
+					LetsGame_Relationship r = new LetsGame_Relationship();
+					r.Requester = user;
+					r.Addressee = otherUser;
+					context.dbUserRelationships.Add(r);
+				}
 
-			//vote.Voter = user;
-			//vote.Poll = poll;
-			//vote.PollOption = pollOption;
+				Random generator = new Random();
+				int count = generator.Next();
+				//Create some events
+				for (int i = 0; i < count; i++) {
+					var ev = new LetsGame_Event(RandomDateTime());
+					var uev = new LetsGame_UserEvent(true);
+					uev.Event = ev;
+					uev.User = user;
+					var poll = new LetsGame_Poll(GetTimeBetweenDates(DateTime.Now,ev.EventDateTime),ev.EventDateTime);
+					poll.PollOptions = GetRandomPollOptions();
+					poll.Event = ev;
 
-			//context.dbPollVotes.Add(vote);
+					context.dbEvents.Add(ev);
+					context.dbUserEvents.Add(uev);
+					context.dbPolls.Add(poll);
+				}
+			}
+			context.SaveChanges();
+		}
 
-			//context.SaveChanges();
-			 
-
-			//var pinnedEvents = context.dbUserEvents.Include(ue => ue.Event).Where(ue => ue.UserID == "94df1db0-c13f-4080-816c-8358a94f4a2e").Select(ue => new { ue.Event,ue.IsPinned }).ToList();
-			//context.Database.EnsureCreated();
-
-   //         Debug.WriteLine("Initializing");
-
-   //         LetsGame_User? testUser = context.Users.Find("ef6a8aee-3b33-4f16-9d56-ebdaf0803a87");
-   //         var ev = context.CreateEvent(testUser,RandomDateTime(),RandomDateTime());
-
-   //         var temp = context.GetUserEvents(testUser);
-
-   //         if (temp == null) return;
-
-   //         foreach (LetsGame_Event ev in temp) {
-   //             Console.WriteLine(ev.EventName);
-   //         }
-        }
-
+		public static bool AreFriends(LetsGame_User user1, LetsGame_User user2) {
+			return user1.Friends.Where(r => r.AddresseeID == user2.Id || r.RequesterID == user2.Id).Count() > 0;
+		}
 		public static DateTime RandomDateTime() {
             Random rand = new Random();
-            int day, year, month, hour, minute;
-            day = rand.Next(1,27);
-            year = rand.Next(2022,2023);
-            month = rand.Next(1,12);
-            hour = rand.Next(0,23);
-            minute = rand.Next(0,59);
+			int days, hours, minutes;
+            days = rand.Next(1,27);
+            hours = rand.Next(0,23);
+            minutes = rand.Next(0,59);
 
-            return new DateTime(year,month,day,hour,minute,0);
+			TimeSpan add = new TimeSpan(days,hours,minutes,0);
+
+			return DateTime.Now + add;
         }
+
+		public static DateTime GetTimeBetweenDates(DateTime start, DateTime end) {
+			TimeSpan s = end - start;
+			Random generator = new Random();
+			s = s - new TimeSpan(generator.Next() % s.Days,generator.Next() % s.Hours,generator.Next() % s.Minutes,0);
+			return start + s;
+		}
 
         public static List<LetsGame_PollOption> GetRandomPollOptions() {
 
