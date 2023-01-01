@@ -8,7 +8,7 @@
 	ViewData["Title"] = @Model.EventName;
 }
 
-<div class="row">
+<div class="row pt-1 pb-3">
 	<h1 class="col">@Model.EventName</h1>
 </div>
 <partial name="_StatusMessage" model="Model.EventsModel.StatusMessage" />
@@ -36,6 +36,7 @@ else {
 	if (Model.EventsModel.HasPinnedEvents) {
 		<partial name="_PinnedEvents" model="Model.EventsModel.PinnedEvents" />
 	}
+	
 	<partial name="_EventList" model="new PartialModel_EventList(Model.EventsModel.UserEvents, Model.EventsModel.SourceURL)" />
 }
 

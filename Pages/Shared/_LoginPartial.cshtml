@@ -8,7 +8,7 @@
 @if (SignInManager.IsSignedIn(User))
 {
     <div class="btn-group">
-        <button type="button" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
             Hello @User.Identity?.Name!
         </button>
         <ul class="dropdown-menu dropdown-menu-end text-dark">
