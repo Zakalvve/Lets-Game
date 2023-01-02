@@ -1,0 +1,22 @@
+﻿.my-table {
+    display: table;
+    table-layout: fixed;
+    border-collapse: collapse;
+    width: 100%;
+    height: 100%;
+}
+
+.my-row {
+    display: table-row;
+}
+
+#my-row2 {
+    height: 100%; /* occupy max height available */
+}
+
+.my-scrollable {
+    position: relative;
+    overflow-y: auto;
+    height: 100%;
+    background: gold;
+}
