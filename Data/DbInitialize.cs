@@ -19,7 +19,7 @@ namespace LetsGame.Data
 
 				//Make friends
 				foreach (LetsGame_User otherUser in context.Users) {
-					if (otherUser.UserName == user.UserName || AreFriends(user,otherUser)) continue;
+					if (otherUser.UserName == user.UserName || AreFriends(user, otherUser)) continue;
 					LetsGame_Relationship r = new LetsGame_Relationship();
 					r.Requester = user;
 					r.Addressee = otherUser;
