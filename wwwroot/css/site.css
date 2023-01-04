@@ -1,7 +1,7 @@
 html {
     font-size: 14px;
     position: relative;
-    min-height: 100%;
+    height: 100%;
 }
 
 @media (min-width: 768px) {
@@ -10,17 +10,16 @@ html {
     }
 }
 
-
-html, body {
-    height: 100%;
-}
-
 .site-root {
     display: grid;
     grid-template-rows: auto 1fr auto;
     height: 100%;
 }
 
-#site-footer {
-    position: static;
+.footer {
+    position: static!important;
+}
+
+.flex-wrap-0 {
+
 }

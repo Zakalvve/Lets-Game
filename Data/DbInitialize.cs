@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using LetsGame.Data.Models;
 using LetsGame.Areas.Identity.Data;
 using System.Diagnostics;
+using System.Reflection.Metadata;
 
 namespace LetsGame.Data
 {
@@ -17,8 +18,8 @@ namespace LetsGame.Data
 			foreach (LetsGame_User user in context.Users) {
 
 				//Make friends
-				foreach(LetsGame_User otherUser in context.Users) {
-					if (otherUser.UserName == user.UserName || AreFriends(user, otherUser)) continue;
+				foreach (LetsGame_User otherUser in context.Users) {
+					if (otherUser.UserName == user.UserName || AreFriends(user,otherUser)) continue;
 					LetsGame_Relationship r = new LetsGame_Relationship();
 					r.Requester = user;
 					r.Addressee = otherUser;

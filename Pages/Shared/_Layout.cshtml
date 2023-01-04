@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/LetsGame.styles.css" asp-append-version="true" />
 </head>
-<body class="site-root">
+<body class="site-root h-100">
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
@@ -25,11 +25,11 @@
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="d-flex flex-column h-100 pb-3">
-            @RenderBody()
+        
+        <!--Main Page Content Body-->
+        <main role="main" class="container d-flex flex-column flex-grow-1 pb-3">
+             @RenderBody()
         </main>
-    </div>
 
     <footer id="site-footer" class="border-top footer text-muted">
         <div class="container">
