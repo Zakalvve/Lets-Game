@@ -3,13 +3,11 @@ using System.Globalization;
 
 namespace LetsGame.Areas.Hub.Models
 {
-	public class PartialModel_EventList
+	public class PartialModel_EventList : PartialModel
 	{
-		public PartialModel_EventList(List<LetsGame_UserEvent> uEs, string currentPage) {
+		public PartialModel_EventList(List<LetsGame_UserEvent> uEs, string currentPage) :base(currentPage) {
 			UserEvents = uEs;
-			CurrentPage = currentPage;
 		}
-		public string CurrentPage { get; private set; }
 		public List<LetsGame_UserEvent> UserEvents { get; private set; }
 	}
 }

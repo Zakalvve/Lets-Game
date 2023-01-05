@@ -14,11 +14,10 @@
 <!---Display Controls-->
 <div class="row">
 	<div class="d-flex flex-row-reverse">
-		<partial name="Controls/_PinEvent" model="@new ControlModel_PinEvent(Model.UserEvent.IsPinned, Model.Event.ID, Model.CurrentPage)"/>
 		@if (Model.UserEvent.IsCreator){
-					<partial name="Controls/_DeleteEvent" model="@new ControlModel_EventData(Model.Event.ID, Model.CurrentPage)" />
-					<partial name="Controls/_UpdateEvent" model="@new ControlModel_EventData(Model.Event.ID, Model.CurrentPage)"/>
+			<partial name="Controls/_EventDropDownControls" model="@new ControlModel_EventData(Model.Event.ID, Model.CurrentPage)"/>
 		}
+		<partial name="Controls/_PinEvent" model="@new ControlModel_PinEvent(Model.UserEvent.IsPinned, Model.Event.ID, Model.CurrentPage)"/>
 	</div>
 </div>
 <!---Display Description-->
@@ -31,53 +30,7 @@
 
 @if (Model.HasPoll)
 {
-	//for polls we need controls to add poll, add game, delete poll, edit poll, vote for option
-	<h3>@Model.Poll.PollDeadline</h3>
-	<div class="row mx-0 my-4">
-		<div class="col flex-column">
-			<div class="d-flex row border border-dark text-dark">
-				<div class="d-flex col-8">
-					<div class="p-2" style="flex:1 0 25%">
-						Game
-					</div>
-					<div class="p-2" style="flex:1 0 25%">
-						Votes
-					</div>
-				</div>
-				<div class="col-4 d-flex flex-row-reverse">
-					<a class="btn btn-danger" asp-area="Hub" asp-page="/Polls/Delete" asp-route-pollID="@Model.Poll.ID" asp-route-returnUrl="@Model.CurrentPage">Delete Poll</a>
-				</div>
-			</div>
-			@foreach (LetsGame_PollOption po in Model.Poll.PollOptions)
-			{
-				<div class="d-flex row border-end border-start border-bottom border-dark text-dark">
-					<div class="col-8 d-flex flex-row">
-						<div class="p-2" style="flex:1 0 25%">
-							@po.Game
-						</div>
-						<div class="p-2" style="flex:1 0 25%">
-							@po.Votes
-						</div>
-					</div>
-					<div class="col-4 d-flex flex-row-reverse">
-						<p class="btn">Vote For Option</p>
-					</div>
-				</div>
-			}
-		</div>
-	</div>
-	@if (Model.UserEvent.IsCreator) {
-			<form class="d-flex row" method="post" asp-area="Hub" asp-page="/Events/Index" asp-page-handler="AddPollGame" asp-route-pollID="@Model.Poll.ID" asp-route-returnUrl="@Model.CurrentPage">
-				<div class="col-8 d-flex flex-row">
-					<div class="p-2" style="flex:1 0 25%">
-						<input type="text" name="gameName" value="Enter Game Name">
-					</div>
-				</div>
-				<div class="col-4 d-flex flex-row-reverse">
-					<button class="btn btn-outline-dark" type="submit">Add New Game</button>
-				</div>
-			</form>
-	}
+	<partial name="_Poll" model="@new PartialModel_Poll(Model.CurrentPage, Model.Poll, Model.UserVote, Model.UserEvent.IsCreator)"/>
 }
 else {
 	<div class="row mx-0 my-4">
@@ -99,14 +52,15 @@ else {
 			<strong>Creator:</strong> <span class="text-primary">@Model.Event.UserEvents.Single(ue => ue.IsCreator).User.UserName</span>
 		</div>
 		@if (Model.Event.UserEvents.Count > 1) {
-			<div class="lead text-muted">
+			<div class="lead text-muted pe-2">
 				<strong>Particiants:</strong>
 			</div>
 		}
+
 		@foreach(LetsGame_UserEvent ue in Model.Event.UserEvents) {
 			if (!ue.IsCreator)
 			{
-				<div class="lead text-muted">@ue.User.UserName</div>
+				<div class="lead text-muted pe-2">@ue.User.UserName</div>
 			}
 		}
 	</div>

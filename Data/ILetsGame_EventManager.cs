@@ -53,7 +53,8 @@ namespace LetsGame.Data
         //DELETE
         public bool DeletePoll(LetsGame_Poll p);
         public bool AddPollOption(long pollID,LetsGame_PollOption po);
-
+        public bool AddUserPollVote(LetsGame_User user,long pollID,long pollOptionID);
+        public LetsGame_UserPollVote? GetUserPollVote(LetsGame_User user,long pollID);
 		public List<T>? ToList<T>(T data);
 	}
 }

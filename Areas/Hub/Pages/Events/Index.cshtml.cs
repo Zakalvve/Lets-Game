@@ -50,8 +50,9 @@ namespace LetsGame.Areas.Hub.Pages
             if (eventID.HasValue) {
                 if (_eventManager.UserIsAuthorized((long)eventID,user)) {
                     var data = await _eventManager.GetUserEventAsync((long)eventID,user);
-                    EventsModel = new Model_UserEventsData(_eventManager.ToList<LetsGame_UserEvent>(data),Request.Path,true);
-                    EventsModel.EventPoll = _eventManager.GetPollFromEvent((long)EventsModel.GetSingle()?.EventID);
+                    var upv = data.Event.Poll == null ? null : _eventManager.GetUserPollVote(user,data.Event.Poll.ID);
+
+					EventsModel = new Model_UserEventsData(_eventManager.ToList<LetsGame_UserEvent>(data),upv, Request.Path,true);
                 }
                 else {
                     tryList = true;
@@ -61,7 +62,7 @@ namespace LetsGame.Areas.Hub.Pages
             //if no id is supplied then load the users events as a list
             if (!eventID.HasValue || tryList) {
                 var data = await _eventManager.GetUserEventsAsync(user);
-                EventsModel = new Model_UserEventsData(data,Request.Path,false);
+                EventsModel = new Model_UserEventsData(data,null,Request.Path,false) ;
                 if (tryList) EventsModel.StatusMessage = "Error: User not authorized to access that event.";
             }
 
@@ -98,8 +99,17 @@ namespace LetsGame.Areas.Hub.Pages
             }
             LetsGame_PollOption po = new(gameName);
             _eventManager.AddPollOption(pollID, po);
-			_eventManager.Save();
+			await _eventManager.SaveAsync();
 			return Redirect(returnUrl);
 		}
+
+        public async Task<IActionResult> OnPostCastVote(string returnURL, long pollID, long pollOptionID) {
+            var user = await _userManager.GetUserAsync(User);
+
+ 
+            if(_eventManager.AddUserPollVote(user,pollID,pollOptionID)) await _eventManager.SaveAsync();
+            return Redirect(returnURL);
+            
+        }
 	}
 }

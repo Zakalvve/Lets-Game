@@ -223,6 +223,46 @@ namespace LetsGame.Data
 			_context.dbPollOptions.Add(po);
 			return true;
 		}
+
+		public bool AddUserPollVote(LetsGame_User user, long pollID, long pollOptionID) {
+
+			LetsGame_UserPollVote upv;
+			LetsGame_Poll? p = GetPoll(pollID);
+
+			//if user has voted previously a vote object already exists for them
+			if (UserPollVoteExists(user,pollID)) {
+				upv = _context.dbPollVotes.Find(user.Id,pollID);
+				if (upv.PollOptionID == pollOptionID) return false;
+			}
+			else {
+				upv = CreateUserPollVote(user,p);
+				if (upv == null) return false;
+			}
+
+			upv.PollOption = p.PollOptions.Find(po => po.ID == pollOptionID);
+			return true;
+		}
+		public LetsGame_UserPollVote? GetUserPollVote(LetsGame_User user, long pollID) {
+			LetsGame_UserPollVote upv = _context.dbPollVotes.Find(user.Id,pollID);
+			if (upv == null) {
+				upv = CreateUserPollVote(user,GetPoll(pollID));
+			}
+			return upv;
+		}
+
+		private LetsGame_UserPollVote CreateUserPollVote(LetsGame_User user, LetsGame_Poll poll) {
+			if (user == null || poll == null) return null;
+			LetsGame_UserPollVote upv = new LetsGame_UserPollVote();
+			upv.Poll = poll;
+			upv.Voter = user;
+			_context.dbPollVotes.Add(upv);
+			Save();
+			return upv;
+
+		}
+		private bool UserPollVoteExists(LetsGame_User user, long pollID) {
+			return _context.dbPollVotes.Find(user.Id,pollID) != null;
+		}
         private bool CanCreatePoll(LetsGame_UserEvent ue) {
 			return ue.IsCreator;
 		}

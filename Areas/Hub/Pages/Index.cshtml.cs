@@ -25,7 +25,7 @@ namespace LetsGame.Areas.Hub
 
 		private async Task LoadAsync(LetsGame_User user) {
             var data = await _eventManager.GetUserEventsAsync(user);
-			EventsModel = new Model_UserEventsData(data ,Request.Path, false);
+			EventsModel = new Model_UserEventsData(data , null, Request.Path, false);
 		}
 
 		public async Task<IActionResult> OnGetAsync()

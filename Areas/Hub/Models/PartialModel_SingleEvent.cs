@@ -3,18 +3,20 @@ using System.Globalization;
 
 namespace LetsGame.Areas.Hub.Models
 {
-	public class PartialModel_SingleEvent
+	public class PartialModel_SingleEvent: PartialModel
 	{
-		public PartialModel_SingleEvent(LetsGame_UserEvent ue, string currentPage) {
+		public PartialModel_SingleEvent(LetsGame_UserEvent ue, LetsGame_UserPollVote userVote, string currentPage) :base(currentPage) {
 			UserEvent = ue;
+			UserVote = userVote;
 			Event = ue.Event;
 			Poll = Event.Poll;
-			CurrentPage = currentPage;
 		}
-		public string CurrentPage { get; private set; }
 		public LetsGame_UserEvent UserEvent { get; private set; }
 		public LetsGame_Event Event { get; private set; }
 		public LetsGame_Poll Poll { get; private set; }
+
+		public LetsGame_UserPollVote UserVote { get; set; }
+
 		public string EventDate { 
 			get {
 				return $"{Event.EventDateTime.ToString("d",CultureInfo.GetCultureInfo("es-ES"))} @ {Event.EventDateTime.ToString("t",CultureInfo.GetCultureInfo("es-ES"))}";

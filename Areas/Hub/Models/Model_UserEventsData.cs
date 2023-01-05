@@ -12,10 +12,12 @@ namespace LetsGame.Areas.Hub.Models
     public class Model_UserEventsData
     {
         public Model_UserEventsData(List<LetsGame_UserEvent>? userEvents,
+            LetsGame_UserPollVote? userVote,
             string sourceUrl,
             bool displaySingles)
         {
             UserEvents = userEvents;
+            UserVote = userVote;
             StatusMessage = "";
             SourceURL = sourceUrl;
             PinnedEvents = UserEvents?.Where(ue => ue.IsPinned).Select(ue => ue).ToList();
@@ -51,6 +53,8 @@ namespace LetsGame.Areas.Hub.Models
         public List<LetsGame_UserEvent>? PinnedEvents { get; set; }
 
         public LetsGame_Poll? EventPoll { get; set; }
+
+        public LetsGame_UserPollVote? UserVote { get; set; }
         /// <summary>
         ///     Returns the first event in the list. Returns null if the model is not set to display singles
         /// </summary>

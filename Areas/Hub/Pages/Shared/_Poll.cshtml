@@ -1,0 +1,76 @@
+﻿@using LetsGame.Data.Models;
+@using LetsGame.Areas.Identity.Data;
+@using LetsGame.Areas.Hub.Models;
+@using System.Globalization;
+@model PartialModel_Poll
+
+@*for polls we need controls to add poll, add game, delete poll, edit poll, vote for option*@
+<h3>@Model.Poll.PollDeadline</h3>
+<div class="row mx-0 my-4">
+	<div class="col flex-column">
+		<table class="table table-striped table-bordered align-middle">
+			<thead>
+				<tr class="align-middle">
+					@*For controlls drop down*@
+					<th scope="col">
+
+					</th>
+					<th scope="col">
+						Game
+					</th>
+					<th scope="col">
+						Votes
+					</th>
+					@*Pin Column*@
+					<th scope="col" class="text-center">
+						<a class="btn btn-danger" asp-area="Hub" asp-page="/Polls/Delete" asp-route-pollID="@Model.Poll.ID" asp-route-returnUrl="@Model.CurrentPage">Delete Poll</a>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (LetsGame_PollOption po in Model.Poll.PollOptions) {
+					<tr>
+						<th scope="row" class="text-center">
+					
+						</th>
+						<td>
+							@po.Game
+						</td>
+						<td>
+							@po.Votes
+						</td>
+						<td class="text-center">
+							@if (Model.HasVoted){
+								if (Model.UserVote.PollOptionID == po.ID) {
+									<form method="post" asp-area="Hub" asp-page="/Events/Index" asp-page-handler="CastVote" asp-route-returnURL="@Model.CurrentPage" asp-route-pollID="@Model.Poll.ID" asp-route-pollOptionID="@po.ID">
+										<button type="submit" class="btn btn-success">Your vote</button>
+									</form>
+								} else {
+									<form method="post" asp-area="Hub" asp-page="/Events/Index" asp-page-handler="CastVote" asp-route-returnURL="@Model.CurrentPage" asp-route-pollID="@Model.Poll.ID" asp-route-pollOptionID="@po.ID">
+										<button type="submit" class="btn btn-outline-success">Vote</button>
+									</form>
+								}
+							} else {
+								<form method="post" asp-area="Hub" asp-page="/Events/Index" asp-page-handler="CastVote" asp-route-returnURL="@Model.CurrentPage" asp-route-pollID="@Model.Poll.ID" asp-route-pollOptionID="@po.ID">
+									<button type="submit" class="btn btn-outline-success">Vote</button>
+								</form>
+							}
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>
+@if (Model.IsCreator) {
+	<form class="d-flex row" method="post" asp-area="Hub" asp-page="/Events/Index" asp-page-handler="AddPollGame" asp-route-pollID="@Model.Poll.ID" asp-route-returnUrl="@Model.CurrentPage">
+		<div class="col-8 d-flex flex-row">
+			<div class="p-2" style="flex:1 0 25%">
+				<input type="text" name="gameName" value="Enter Game Name">
+			</div>
+		</div>
+		<div class="col-4 d-flex flex-row-reverse">
+			<button class="btn btn-outline-dark" type="submit">Add New Game</button>
+		</div>
+	</form>
+}

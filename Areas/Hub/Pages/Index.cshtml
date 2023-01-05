@@ -30,7 +30,7 @@ else if (Model.EventsModel.IsSingle && Model.EventsModel.DisplaySingles) {
 	LetsGame_UserEvent ue = Model.EventsModel.GetSingle();
 
 	@if (ue != null) {
-		<partial name="_SingleEvent" model="new PartialModel_SingleEvent(ue, Model.EventsModel.SourceURL)" />
+		<partial name="_SingleEvent" model="new PartialModel_SingleEvent(ue, null,  Model.EventsModel.SourceURL)" />
 	}
 }
 else {
