@@ -9,7 +9,7 @@ namespace LetsGame.Areas.Identity.Data
 
         public string? Bio { get; set; }
 
-        //all events this user in included in
+        //EVENTS
         public virtual List<LetsGame_Event> Events { get; set; } = new List<LetsGame_Event>();
         public virtual List<LetsGame_UserEvent> UserEvents { get; set; } = new List<LetsGame_UserEvent>();
 
@@ -25,5 +25,8 @@ namespace LetsGame.Areas.Identity.Data
 
         //POLL VOTING
         public virtual List<LetsGame_UserPollVote> UserVotes { get; set; } = new List<LetsGame_UserPollVote>();
+
+        //CHAT
+        public virtual List<LetsGame_UserChat> UserChats { get; set; } = new List<LetsGame_UserChat>();
     }
 }

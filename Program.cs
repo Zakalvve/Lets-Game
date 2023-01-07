@@ -1,5 +1,6 @@
 using LetsGame.Areas.Identity.Data;
 using LetsGame.Data;
+using LetsGame.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,7 @@ builder.Services.AddDefaultIdentity<LetsGame_User>(options => options.SignIn.Req
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddScoped<ILetsGame_EventManager,LetsGame_EventManager>();
+builder.Services.AddTransient<IFriendsService,FriendsManager>();
 builder.Services.AddLogging();
 
 builder.Services.AddRazorPages();

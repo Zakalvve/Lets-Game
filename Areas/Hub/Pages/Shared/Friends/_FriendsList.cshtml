@@ -1,0 +1,18 @@
+﻿@using LetsGame.Areas.Identity.Data
+@using LetsGame.Services
+@model List<FriendData>
+
+<div class="row flex-grow-1 app-mode-row">
+	<div class="col flex-column flex-grow-1 app-mode-col">
+		<ul class="col list-group-flush p-0">
+			@foreach (var friend in Model) {
+				<li onclick="displayChat(&quot;.list-group-item&quot;, this, '@friend.ID')" class="list-group-item">
+					<h3 class="lead">@friend.Username</h3>
+				</li>
+			}
+		</ul>
+	</div>
+</div>
+<div class="row">
+	<button onclick="displayAddFriend()" class="col btn btn-primary">Add Friend</button>
+</div>

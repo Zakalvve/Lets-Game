@@ -1,44 +1,39 @@
 ﻿@page
+@using LetsGame.Services
 @model LetsGame.Areas.Hub.Pages.Friends.IndexModel
 @{
 	ViewData["Title"] = "Friends";
 }
 
 @section Scripts{
-	<script src="~/js/ClassicAppMode.js"></script>
+	<script src="~/js/FriendsPage.js"></script>
 }
 <!--Friends List-->
-<div class="col-3 d-flex flex-column flex-grow-1">
-	<div class="row">
+<div class="col d-flex flex-column">
+	<div class="row mb-2">
 		<ul class="nav nav-tabs">
 			<li class="nav-item">
-				<a class="nav-link active" aria-current="page" href="#">Friends</a>
+				<button onclick="displayFriends(&quot;.tabs&quot;, this)" class="nav-link tabs active" aria-current="page" href="#">Friends</button>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="#">Friend Requests</a>
+				<button onclick="displayFriendRequests(&quot;.tabs&quot;, this)" class="nav-link tabs">Friend Requests</button>
+			</li>
+			<li class="nav-item">
+				<button onclick="displaySendRequests(&quot;.tabs&quot;, this)" class="nav-link tabs">Pending Requests</button>
 			</li>
 		</ul>
 	</div>
 	<div class="row flex-grow-1 app-mode-row">
-		<div class="col flex-column flex-grow-1 app-mode-col">
-			<ul class="list-group-flush p-0">
-				@for(int i = 0; i < 4; i++){
-					foreach (string friend in Model.Friends) {
-						<li class="list-group-item">
-							<h3 class="col lead">@friend</h3>
-						</li>
-					}
-				}
-				</ul>
+		<div class="col-3 d-flex flex-column flex-grow-1">
+			<div class="row flex-grow-1 app-mode-row">
+				<div id ="page-list" class="col d-flex flex-column flex-grow-1">
+					<partial name="Friends/_FriendsList" model="@Model.Options"/>
+				</div>
+			</div>
 		</div>
-	</div>
-</div>
-<!--Chat-->
-<div class="col-9 d-flex flex-column-reverse flex-grow-1">
-	<div class="row"><h4>Message Bar</h4></div>
-	<div class="row flex-grow-1 app-mode-row">
-		<div class="col flex-grow-1 app-mode-col">
-			<p style="height:300vh;">1. Some paragraph to force scrollbars...</p>End
+		<!--Chat-->
+		<div id="display" class="col-9 d-flex flex-grow-1">
+
 		</div>
 	</div>
 </div>

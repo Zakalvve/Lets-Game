@@ -1,0 +1,11 @@
+﻿@using LetsGame.Areas.Identity.Data
+@using LetsGame.Services
+@model List<FriendData>
+
+<ul class="list-group-flush p-0">
+	@foreach (var friend in Model) {
+		<li onclick="displayFriendRequest(&quot;.list-group-item&quot;, this, '@friend.ID')" class="list-group-item">
+			<h3 class="col lead">@friend.Username</h3>
+		</li>
+	}
+</ul>

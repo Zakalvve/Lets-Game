@@ -17,6 +17,9 @@ namespace LetsGame.Data
         public DbSet<LetsGame_UserEvent> dbUserEvents { get; set; }
         public DbSet<LetsGame_UserPollVote> dbPollVotes { get; set; }
         public DbSet<LetsGame_Relationship> dbUserRelationships { get; set; }
+        public DbSet<LetsGame_UserChat> dbUserChats { get; set; }
+        public DbSet<LetsGame_Chat> dbChats { get; set; }
+        public DbSet<LetsGame_ChatMessage> dbChatMessages { get; set; }
 
 
         #region Required
@@ -54,6 +57,9 @@ namespace LetsGame.Data
 
             builder.Entity<LetsGame_Relationship>(
                 b => {
+                    b.Property(r => r.IsPendingAccept)
+                        .IsRequired();
+
                     b.HasOne(r => r.Requester)
                         .WithMany(user => user.RelationshipsAsRequester)
                         .HasForeignKey(r => r.RequesterID)
@@ -181,6 +187,54 @@ namespace LetsGame.Data
                     b.Ignore(upv => upv.HasVoted);
 
                     b.ToTable("LetsGamePollVotes");
+                });
+
+            builder.Entity<LetsGame_UserChat>(
+                b => {
+                    b.HasOne(uc => uc.User)
+                        .WithMany(user => user.UserChats)
+                        .HasForeignKey(uc => uc.UserID);
+
+                    b.HasOne(uc => uc.Chat)
+                        .WithMany(c => c.Participants)
+                        .HasForeignKey(uc => uc.ChatID);
+
+                    b.HasKey(k => new { k.UserID,k.ChatID });
+
+                    b.ToTable("LetsGame_UserChats");
+                });
+
+            builder.Entity<LetsGame_Chat>(
+                b => {
+                    b.HasMany(c => c.Participants)
+                        .WithOne(uc => uc.Chat);
+
+                    b.HasMany(c => c.Messages)
+                        .WithOne(cm => cm.Chat);
+
+                    b.HasKey(c => c.ID);
+
+                    b.ToTable("LetsGame_Chats");
+                });
+
+            builder.Entity<LetsGame_ChatMessage>(
+                b => {
+                    b.Property(cm => cm.Message)
+                        .IsRequired();
+
+                    b.Property(cm => cm.UserName)
+                    .IsRequired();
+
+                    b.Property(cm => cm.MessageDate)
+                        .IsRequired();
+
+                    b.HasOne(cm => cm.Chat)
+                        .WithMany(c => c.Messages)
+                        .HasForeignKey(cm => cm.ChatID);
+
+                    b.HasKey(cm => cm.ID);
+
+                    b.ToTable("LetsGame_ChatMessages");
                 });
         }
         #endregion

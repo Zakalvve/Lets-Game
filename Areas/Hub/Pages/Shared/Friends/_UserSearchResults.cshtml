@@ -1,0 +1,11 @@
+﻿@using LetsGame.Areas.Identity.Data
+@using LetsGame.Services
+@using LetsGame.Data.Models
+@model List<FriendData>
+
+<label for="users">Type to search for your friends</label>
+<select id="users" name="friendID">
+    @foreach (var result in Model) {
+        <option value="@result.ID" class="col btn btn-primary">@result.Username</option>
+    }
+</select>
