@@ -89,12 +89,20 @@ namespace LetsGame.Areas.Hub.Pages.Friends
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public PartialViewResult OnGetSearchPartial(string input) {
+        public async Task<PartialViewResult> OnGetSearchPartial(string input) {
 
-            //create list of possible users
-            List<FriendData> users = _userManager.Users
-                .Where(user => user.NormalizedUserName.StartsWith(input))
-                .Select(user => new FriendData(user.Id,user.UserName)).ToList();
+			var user = await _userManager.GetUserAsync(User);
+
+            //Gets a list of ID's for users that are already in a relationship with the current user.
+            //Used to cross reference generated list and avoid adding a friend twice.
+            var currentRelationships = _friendsManager.GetAllRelationships(user).Select(r  => r.ID);
+
+			//create list of possible users to befriend
+			List<FriendData> users = _userManager.Users
+                .Where(u => u.NormalizedUserName.StartsWith(input) 
+                            && u.Id != user.Id 
+                            && !currentRelationships.Contains(u.Id))
+                .Select(u => new FriendData(u.Id,u.UserName)).ToList();
 
             //return the partial with the supplied list
             return Partial("Friends/_UserSearchResults",users);
