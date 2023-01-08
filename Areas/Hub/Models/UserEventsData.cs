@@ -9,9 +9,9 @@ namespace LetsGame.Areas.Hub.Models
     ///     The partial uses the model to decide if a single event should
     ///     be displayed, or if a list of events should be displayed.
     /// </summary>
-    public class Model_UserEventsData
+    public class UserEventsData
     {
-        public Model_UserEventsData(List<LetsGame_UserEvent>? userEvents,
+        public UserEventsData(List<LetsGame_UserEvent>? userEvents,
             LetsGame_UserPollVote? userVote,
             string sourceUrl,
             bool displaySingles)

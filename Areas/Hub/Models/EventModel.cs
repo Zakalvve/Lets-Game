@@ -3,9 +3,9 @@ using System.Globalization;
 
 namespace LetsGame.Areas.Hub.Models
 {
-	public class PartialModel_SingleEvent: PartialModel
+	public class EventModel: BasePartialModel
 	{
-		public PartialModel_SingleEvent(LetsGame_UserEvent ue, LetsGame_UserPollVote userVote, string currentPage) :base(currentPage) {
+		public EventModel(LetsGame_UserEvent ue, LetsGame_UserPollVote userVote, string currentPage) :base(currentPage) {
 			UserEvent = ue;
 			UserVote = userVote;
 			Event = ue.Event;

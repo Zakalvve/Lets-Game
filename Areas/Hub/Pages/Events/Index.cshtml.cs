@@ -18,7 +18,7 @@ namespace LetsGame.Areas.Hub.Pages
             _userManager = userManager;
         }
 
-        public Model_UserEventsData EventsModel { get; private set; }
+        public UserEventsData EventsModel { get; private set; }
        
         public string EventName { get; set; }       
 
@@ -52,7 +52,7 @@ namespace LetsGame.Areas.Hub.Pages
                     var data = await _eventManager.GetUserEventAsync((long)eventID,user);
                     var upv = data.Event.Poll == null ? null : _eventManager.GetUserPollVote(user,data.Event.Poll.ID);
 
-					EventsModel = new Model_UserEventsData(_eventManager.ToList<LetsGame_UserEvent>(data),upv, Request.Path,true);
+					EventsModel = new UserEventsData(_eventManager.ToList<LetsGame_UserEvent>(data),upv, Request.Path,true);
                 }
                 else {
                     tryList = true;
@@ -62,7 +62,7 @@ namespace LetsGame.Areas.Hub.Pages
             //if no id is supplied then load the users events as a list
             if (!eventID.HasValue || tryList) {
                 var data = await _eventManager.GetUserEventsAsync(user);
-                EventsModel = new Model_UserEventsData(data,null,Request.Path,false) ;
+                EventsModel = new UserEventsData(data,null,Request.Path,false) ;
                 if (tryList) EventsModel.StatusMessage = "Error: User not authorized to access that event.";
             }
 

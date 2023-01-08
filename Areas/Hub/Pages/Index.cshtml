@@ -2,6 +2,7 @@
 @using LetsGame.Data.Models;
 @using LetsGame.Areas.Identity.Data;
 @using LetsGame.Areas.Hub.Models;
+@using LetsGame.Areas.Hub.Models.Controls;
 @using System.Globalization;
 @model LetsGame.Areas.Hub.IndexModel
 @{
@@ -22,7 +23,7 @@
 	<div>
 		Uh-oh, looks like you haven't made any events. Click the add event button to get started.
 	</div>
-	<partial name="Controls/_UpdateEvent" model="@new ControlModel_EventData(null, Model.EventsModel.SourceURL)" />
+	<partial name="Controls/_UpdateEvent" model="@new EventButtonModel(null, Model.EventsModel.SourceURL)" />
 }
 else if (Model.EventsModel.IsSingle && Model.EventsModel.DisplaySingles) {
 
@@ -30,12 +31,12 @@ else if (Model.EventsModel.IsSingle && Model.EventsModel.DisplaySingles) {
 	LetsGame_UserEvent ue = Model.EventsModel.GetSingle();
 
 	@if (ue != null) {
-		<partial name="_SingleEvent" model="new PartialModel_SingleEvent(ue, null,  Model.EventsModel.SourceURL)" />
+		<partial name="_SingleEvent" model="new EventModel(ue, null,  Model.EventsModel.SourceURL)" />
 	}
 }
 else {
 	if (Model.EventsModel.HasPinnedEvents) {
 		<partial name="_PinnedEvents" model="Model.EventsModel.PinnedEvents" />
 	}
-	<partial name="_EventList" model="new PartialModel_EventList(Model.EventsModel.UserEvents, Model.EventsModel.SourceURL)" />
+	<partial name="_EventList" model="new EventListModel(Model.EventsModel.UserEvents, Model.EventsModel.SourceURL)" />
 }

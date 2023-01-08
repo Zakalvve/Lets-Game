@@ -2,9 +2,9 @@
 
 namespace LetsGame.Areas.Hub.Models
 {
-	public class PartialModel_Poll: PartialModel
+	public class PollModel: BasePartialModel
 	{
-		public PartialModel_Poll(string currentPage, LetsGame_Poll poll, LetsGame_UserPollVote userVote, bool isCreator) :base (currentPage) {
+		public PollModel(string currentPage, LetsGame_Poll poll, LetsGame_UserPollVote userVote, bool isCreator) :base (currentPage) {
 			Poll = poll;
 			UserVote = userVote;
 			IsCreator = isCreator;

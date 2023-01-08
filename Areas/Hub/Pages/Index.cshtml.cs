@@ -21,11 +21,11 @@ namespace LetsGame.Areas.Hub
             _userManager = userManager;
 		}
 
-        public Model_UserEventsData EventsModel { get; private set; }
+        public UserEventsData EventsModel { get; private set; }
 
 		private async Task LoadAsync(LetsGame_User user) {
             var data = await _eventManager.GetUserEventsAsync(user);
-			EventsModel = new Model_UserEventsData(data , null, Request.Path, false);
+			EventsModel = new UserEventsData(data , null, Request.Path, false);
 		}
 
 		public async Task<IActionResult> OnGetAsync()

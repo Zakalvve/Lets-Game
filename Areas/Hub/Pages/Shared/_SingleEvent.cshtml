@@ -1,8 +1,9 @@
 ﻿@using LetsGame.Data.Models;
 @using LetsGame.Areas.Identity.Data;
 @using LetsGame.Areas.Hub.Models;
+@using LetsGame.Areas.Hub.Models.Controls;
 @using System.Globalization;
-@model PartialModel_SingleEvent
+@model EventModel
 
 <!---Display Date/Time Left-->
 <div class="row">
@@ -15,9 +16,9 @@
 <div class="row">
 	<div class="d-flex flex-row-reverse">
 		@if (Model.UserEvent.IsCreator){
-			<partial name="Controls/_EventDropDownControls" model="@new ControlModel_EventData(Model.Event.ID, Model.CurrentPage)"/>
+			<partial name="Controls/_EventDropDownControls" model="@new EventButtonModel(Model.Event.ID, Model.CurrentPage)"/>
 		}
-		<partial name="Controls/_PinEvent" model="@new ControlModel_PinEvent(Model.UserEvent.IsPinned, Model.Event.ID, Model.CurrentPage)"/>
+		<partial name="Controls/_PinEvent" model="@new PinEventButtonModel(Model.UserEvent.IsPinned, Model.Event.ID, Model.CurrentPage)"/>
 	</div>
 </div>
 <!---Display Description-->
@@ -30,7 +31,7 @@
 
 @if (Model.HasPoll)
 {
-	<partial name="_Poll" model="@new PartialModel_Poll(Model.CurrentPage, Model.Poll, Model.UserVote, Model.UserEvent.IsCreator)"/>
+	<partial name="_Poll" model="@new PollModel(Model.CurrentPage, Model.Poll, Model.UserVote, Model.UserEvent.IsCreator)"/>
 }
 else {
 	<div class="row mx-0 my-4">

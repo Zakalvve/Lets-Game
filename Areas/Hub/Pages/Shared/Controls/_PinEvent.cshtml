@@ -1,5 +1,5 @@
-﻿@using LetsGame.Areas.Hub.Models
-@model ControlModel_PinEvent
+﻿@using LetsGame.Areas.Hub.Models.Controls;
+@model PinEventButtonModel
 
 <div class="p-2">
 	<form method="post" asp-area="Hub" asp-page="/Events/Index" asp-page-handler="TogglePinned" asp-route-eventID="@Model.EventID" asp-route-returnUrl="@Model.ReturnURL">

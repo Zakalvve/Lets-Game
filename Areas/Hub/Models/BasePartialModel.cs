@@ -2,9 +2,9 @@
 
 namespace LetsGame.Areas.Hub.Models
 {
-	public class PartialModel
+	public class BasePartialModel
 	{
-		public PartialModel(string currentPage) {
+		public BasePartialModel(string currentPage) {
 			CurrentPage = currentPage;
 		}
 		public string CurrentPage { get; set; }

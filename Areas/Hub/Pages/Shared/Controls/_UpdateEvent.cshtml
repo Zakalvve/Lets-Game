@@ -1,5 +1,5 @@
-﻿@using LetsGame.Areas.Hub.Models
-@model ControlModel_EventData
+﻿@using LetsGame.Areas.Hub.Models.Controls;
+@model EventButtonModel
 
 <div class="p-2">
 	<a class="btn btn-primary" asp-area="Hub" asp-page="/Events/Edit" asp-route-eventId="@Model.EventID" asp-route-returnUrl="@Model.ReturnURL">@(Model.EventID == 0 ? "New" : "Edit")</a>

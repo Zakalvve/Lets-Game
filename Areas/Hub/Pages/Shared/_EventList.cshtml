@@ -1,8 +1,9 @@
 ﻿@using LetsGame.Data.Models;
 @using LetsGame.Areas.Identity.Data;
 @using LetsGame.Areas.Hub.Models;
+@using LetsGame.Areas.Hub.Models.Controls;
 @using System.Globalization;
-@model PartialModel_EventList
+@model EventListModel
 
 <!--A partial for rendering a list of events consitantly-->
 <div class="row py-3">
@@ -25,7 +26,7 @@
 					</th>
 					@*Pin Column*@
 					<th scope="col" class="text-center">
-						<partial name="Controls/_UpdateEvent" model="@new ControlModel_EventData(null, Model.CurrentPage)" />
+						<partial name="Controls/_UpdateEvent" model="@new EventButtonModel(null, Model.CurrentPage)" />
 					</th>
 				</tr>
 			</thead>
@@ -33,7 +34,7 @@
 				@foreach (LetsGame_UserEvent ue in Model.UserEvents) {
 					<tr>
 						<th scope="row" class="text-center">
-							<partial name="Controls/_PinEvent" model="@new ControlModel_PinEvent(ue.IsPinned, ue.EventID, Model.CurrentPage)" />
+							<partial name="Controls/_PinEvent" model="@new PinEventButtonModel(ue.IsPinned, ue.EventID, Model.CurrentPage)" />
 						</th>
 						<td>
 							<a asp-page="/Events/Index" asp-route-eventID=@ue.EventID>@ue.Event.EventName</a>
@@ -46,7 +47,7 @@
 						</td>
 						<td class="text-center">
 							@if (ue.IsCreator) {
-								<partial name="Controls/_EventDropdownControls" model="@new ControlModel_EventData(ue.EventID, Model.CurrentPage)" />
+								<partial name="Controls/_EventDropdownControls" model="@new EventButtonModel(ue.EventID, Model.CurrentPage)" />
 							}
 						</td>
 					</tr>
