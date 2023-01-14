@@ -1,6 +1,13 @@
 ﻿@using LetsGame.Areas.Hub.Models.Controls;
 @model EventButtonModel
 
-<div class="p-2">
-	<a class="btn btn-primary" asp-area="Hub" asp-page="/Events/Edit" asp-route-eventId="@Model.EventID" asp-route-returnUrl="@Model.ReturnURL">@(Model.EventID == 0 ? "New" : "Edit")</a>
-</div>
+@if (Model.IsCreate) {
+	<a class="@(Model.ControlType == ControlType.BUTTON ? "btn btn-primary" : "dropdown-item text-dark")" asp-area="Hub" asp-page="/Events/Edit" asp-route-eventId="@Model.EventID" asp-route-returnUrl="@Model.ReturnURL">
+		<i class="bi bi-plus-lg"></i>
+		New Event
+	</a>
+} else {
+	<a class="@(Model.ControlType == ControlType.BUTTON ? "btn btn-sm btn-secondary" : "dropdown-item text-dark")" asp-area="Hub" asp-page="/Events/Edit" asp-route-eventId="@Model.EventID" asp-route-returnUrl="@Model.ReturnURL">
+		<i class="bi bi-gear"></i>
+	</a>
+}

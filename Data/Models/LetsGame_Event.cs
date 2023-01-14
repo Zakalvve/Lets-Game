@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
+using LetsGame.Data.Data_Annotations;
 using LetsGame.Areas.Identity.Data;
 
 namespace LetsGame.Data.Models
@@ -9,9 +10,9 @@ namespace LetsGame.Data.Models
 
         public LetsGame_Event(DateTime eventDate) {
             EventDateTime = eventDate;
-            EventName = "Default Name";
-            Description = "Default Description...";
-            Location = "Default Location";
+            EventName = "";
+            Description = "";
+            Location = "";
         }
 
         public long ID { get; set; }
@@ -23,9 +24,14 @@ namespace LetsGame.Data.Models
 
         public string EventName { get; set; }
 
+        [Display(Name = "Event Description")]
         public string Description { get; set; }
 
         public string Location { get; set; }
+
+        [Display(Name = "Event Date")]
+        [FutureDate(ErrorMessage = "Date must be in the future")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}",ApplyFormatInEditMode = true)]
         public DateTime EventDateTime { get; set; }
     }
 }

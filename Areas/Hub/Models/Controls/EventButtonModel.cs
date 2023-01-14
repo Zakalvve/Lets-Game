@@ -2,11 +2,16 @@
 {
     public class EventButtonModel : BackLink
     {
-        public EventButtonModel(long? eventID, string returnURL) : base(returnURL)
-        {
-            EventID = eventID.HasValue ? (long)eventID : 0;
-        }
+        public EventButtonModel(long? eventID, string returnURL) : this(eventID, returnURL, ControlType.BUTTON) { }
+
+		public EventButtonModel(long? eventID,string returnURL, ControlType ct) : base(returnURL) {
+			EventID = eventID.HasValue ? (long)eventID : 0;
+            ControlType = ct;
+		}
+
         public EventButtonModel(string returnURL) : this(0, returnURL) { }
+
+        public ControlType ControlType { get; set; }
 
         public long EventID { get; private set; }
 
@@ -17,5 +22,10 @@
                 return EventID == 0;
             }
         }
+    }
+
+    public enum ControlType {
+        BUTTON,
+        DROP_DOWN
     }
 }

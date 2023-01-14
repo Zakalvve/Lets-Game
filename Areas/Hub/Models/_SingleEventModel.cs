@@ -3,9 +3,13 @@ using System.Globalization;
 
 namespace LetsGame.Areas.Hub.Models
 {
-	public class EventModel: BasePartialModel
+	public class _SingleEventModel: BasePartialModel
 	{
-		public EventModel(LetsGame_UserEvent ue, LetsGame_UserPollVote userVote, string currentPage) :base(currentPage) {
+		public _SingleEventModel(
+			LetsGame_UserEvent ue, 
+			LetsGame_UserPollVote userVote, 
+			string currentPage) : base(currentPage) 
+		{
 			UserEvent = ue;
 			UserVote = userVote;
 			Event = ue.Event;
@@ -13,13 +17,18 @@ namespace LetsGame.Areas.Hub.Models
 		}
 		public LetsGame_UserEvent UserEvent { get; private set; }
 		public LetsGame_Event Event { get; private set; }
-		public LetsGame_Poll Poll { get; private set; }
+		public LetsGame_Poll? Poll { get; private set; }
 
-		public LetsGame_UserPollVote UserVote { get; set; }
+		public LetsGame_UserPollVote? UserVote { get; set; }
 
 		public string EventDate { 
 			get {
-				return $"{Event.EventDateTime.ToString("d",CultureInfo.GetCultureInfo("es-ES"))} @ {Event.EventDateTime.ToString("t",CultureInfo.GetCultureInfo("es-ES"))}";
+				return Event.EventDateTime.ToString("dddd d MMMM yyyy");
+			}
+		}
+		public string EventTime {
+			get {
+				return Event.EventDateTime.ToString("h:mm tt");
 			}
 		}
 		public string TimeToEvent {

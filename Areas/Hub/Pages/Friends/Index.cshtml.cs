@@ -107,6 +107,10 @@ namespace LetsGame.Areas.Hub.Pages.Friends
             //return the partial with the supplied list
             return Partial("Friends/_UserSearchResults",users);
         }
+
+        public PartialViewResult OnGetFriendsListControlsPartial(string? friendID) {
+            return Partial("Friends/_FriendsListControls",friendID);
+        }
         /// <summary>
         /// Accepts a friend request from the friend with the given Id and then reloads the page
         /// </summary>
@@ -119,14 +123,36 @@ namespace LetsGame.Areas.Hub.Pages.Friends
             return Redirect("/Hub/Friends");
         }
 
+        /// <summary>
+        /// Accepts a friend request from the friend with the given Id and then reloads the page
+        /// </summary>
+        /// <param name="friendID"></param>
+        /// <returns></returns>
+		public async Task<IActionResult> OnPostDeclineFriendRequest(string friendID) {
+            var user = await _userManager.GetUserAsync(User);
+            _friendsManager.DeclineRequest(user,friendID);
+
+            return Redirect("/Hub/Friends");
+        }
+
         public async Task<IActionResult> OnPostAddFriend(string friendID) {
             var user = await _userManager.GetUserAsync(User);
-            _friendsManager.AcceptRequest(user,friendID);
 
             var friend = _userManager.Users.FirstOrDefault(u => u.Id == friendID);
             _friendsManager.SendFriendRequest(user, friend);
 
             return Redirect("/Hub/Friends");
         }
+
+
+		public async Task<IActionResult> OnPostRemoveFriend(string friendID) {
+			var user = await _userManager.GetUserAsync(User);
+
+			if (friendID != null) {
+                _friendsManager.RemoveFriend(user, friendID);
+            }
+
+			return Redirect("/Hub/Friends");
+		}
 	}
 }

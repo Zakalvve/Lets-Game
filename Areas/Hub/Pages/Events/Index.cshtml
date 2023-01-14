@@ -12,33 +12,35 @@
 <div class="row pt-1 pb-3">
 	<h1 class="col">@Model.EventName</h1>
 </div>
-<partial name="_StatusMessage" model="Model.EventsModel.StatusMessage" />
+<partial name="_StatusMessage" model="Model.PageData.StatusMessage" />
 
 
 <!--A partial for rendering a list of events consitantly-->
-@if (!Model.EventsModel.IsValid) {
+@if (!Model.PageData.IsValid) {
 	//this model is not valid when there is neither a single event nor event list to display
 	//In this case we will notify the user that they have no Events and offer them the option to create a new event
 	<div>
 		Uh-oh, looks like you haven't made any events. Click the add event button to get started.
 	</div>
-	<partial name="Controls/_UpdateEvent" model="@new EventButtonModel(null, Model.EventsModel.SourceURL)" />
+	<partial name="Controls/_UpdateEvent" model="@new EventButtonModel(null, Model.PageData.SourceURL)" />
 }
-else if (Model.EventsModel.IsSingle && Model.EventsModel.DisplaySingles) {
+else if (Model.PageData.RenderType == EventPageRenderType.SINGLE) {
 
 	//the event that we will display
-	LetsGame_UserEvent ue = Model.EventsModel.GetSingle();
+	LetsGame_UserEvent ue = Model.PageData.SingleData.UserEvent;
 
 	@if (ue != null) {
-		<partial name="_SingleEvent" model="new EventModel(ue, Model.EventsModel.UserVote, Model.EventsModel.SourceURL)" />
+		<partial name="_SingleEvent" model="@Model.PageData.SingleData" />
 	}
 }
 else {
-	if (Model.EventsModel.HasPinnedEvents) {
-		<partial name="_PinnedEvents" model="Model.EventsModel.PinnedEvents" />
+	if (Model.PageData.HasPinnedEvents) {
+		<div id="pinned-events" class="row py-3">
+			<partial name="_PinnedEvents" model="Model.PageData.PinnedEvents" />
+		</div>
 	}
 	
-	<partial name="_EventList" model="new EventListModel(Model.EventsModel.UserEvents, Model.EventsModel.SourceURL)" />
+	<partial name="_EventList" model="@Model.PageData.EventListData" />
 }
 
 

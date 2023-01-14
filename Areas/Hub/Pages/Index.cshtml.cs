@@ -23,9 +23,10 @@ namespace LetsGame.Areas.Hub
 
         public UserEventsData EventsModel { get; private set; }
 
-		private async Task LoadAsync(LetsGame_User user) {
-            var data = await _eventManager.GetUserEventsAsync(user);
-			EventsModel = new UserEventsData(data , null, Request.Path, false);
+		private async Task LoadAsync(string userId) {
+            var user = await _userManager.GetUserAsync(User);
+			EventsModel = new UserEventsData(_eventManager);
+            var success = await EventsModel.LoadData(user,null,Request.Path);
 		}
 
 		public async Task<IActionResult> OnGetAsync()
@@ -36,7 +37,7 @@ namespace LetsGame.Areas.Hub
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            await LoadAsync(user);
+            await LoadAsync(user.Id);
 
             return Page();
         }

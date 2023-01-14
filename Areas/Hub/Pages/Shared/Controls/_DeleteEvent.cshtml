@@ -1,6 +1,29 @@
 ﻿@using LetsGame.Areas.Hub.Models.Controls;
 @model EventButtonModel
 
-<div class="p-2">
-	<a class="btn btn-danger" asp-area="Hub" asp-page="/Events/Delete" asp-route-eventID="@Model.EventID" asp-route-returnUrl="@Model.ReturnURL">Delete</a>
+
+<button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#delete-event"><i class="bi bi-trash3"></i></button>
+
+
+<div class="modal fade" id="delete-event" tabindex="-1" aria-labelledby="delete-event-label" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="delete-event-label">Delete Event</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+				<div class="modal-body">
+					<h3>Are you sure?</h3>
+					<p>This action cannot be reversed. In addition all current participants of this event will lose access 
+					   to it. If you prefer you can leave the event yourself by promoting someone else to be the creator.</p>
+				</div>
+			<form class="form-floating" method="post" asp-area="Hub" asp-page="/Events/Index" asp-page-handler="DeleteEvent" asp-route-eventID="@Model.EventID" asp-route-returnUrl="@Model.ReturnURL">
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-success">Promote User</button>
+					<button type="submit" class="btn btn-danger">Delete</button>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>

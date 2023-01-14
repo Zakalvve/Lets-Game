@@ -29,7 +29,7 @@ namespace LetsGame.Areas.Hub.Pages.Events
 
 		public async Task<IActionResult> OnGetAsync(long? eventID, string returnUrl) {
             ReturnURL = returnUrl;
-            var user = await _userManager.GetUserAsync(User);
+            var user = _userManager.GetUserId(User);
             if (eventID == 0) {
                 IsCreate = true;
                 Event = new LetsGame_Event();
@@ -45,7 +45,7 @@ namespace LetsGame.Areas.Hub.Pages.Events
 		}
 
         public async Task<IActionResult> OnPostAsync(bool isCreate, string? returnUrl) {
-            var user = await _userManager.GetUserAsync(User);
+            var user = _userManager.GetUserId(User);
             if (!ModelState.IsValid) {
                 StatusMessage = "Error: Model Invalid, Please try again";
                 return Page();
@@ -62,6 +62,10 @@ namespace LetsGame.Areas.Hub.Pages.Events
 
             if (returnUrl == null) return Redirect("/Hub/Events");
             return Redirect(returnUrl);
+		}
+
+        public IActionResult OnPostCancel(string? returnUrl) {
+			return Redirect(returnUrl);
 		}
 	}
 }

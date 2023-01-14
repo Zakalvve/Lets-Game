@@ -14,5 +14,7 @@
 	</div>
 </div>
 <div class="row">
-	<button onclick="displayAddFriend()" class="col btn btn-primary">Add Friend</button>
+	<div id="friend-controls" class="d-flex col pb-2">
+		<partial name="Friends/_FriendsListControls" model="@String.Empty" />
+	</div>
 </div>

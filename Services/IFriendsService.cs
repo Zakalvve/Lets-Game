@@ -10,6 +10,7 @@ namespace LetsGame.Services
 		public List<FriendData> GetAllSentPendingFriendRequests(LetsGame_User user);
 
         public bool SendFriendRequest(LetsGame_User requester,LetsGame_User addressee);
+		public bool RemoveFriend(LetsGame_User user,string friendID);
         public bool AcceptRequest(LetsGame_User user,string friendID);
 		public bool DeclineRequest(LetsGame_User user,string friendID);
 	}

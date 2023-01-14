@@ -1,5 +1,7 @@
 ﻿using LetsGame.Data;
 using LetsGame.Data.Models;
+using LetsGame.Areas.Identity.Data;
+using Microsoft.AspNetCore.Identity;
 
 namespace LetsGame.Areas.Hub.Models
 {
@@ -9,27 +11,86 @@ namespace LetsGame.Areas.Hub.Models
     ///     The partial uses the model to decide if a single event should
     ///     be displayed, or if a list of events should be displayed.
     /// </summary>
-    public class UserEventsData
-    {
-        public UserEventsData(List<LetsGame_UserEvent>? userEvents,
-            LetsGame_UserPollVote? userVote,
-            string sourceUrl,
-            bool displaySingles)
-        {
-            UserEvents = userEvents;
-            UserVote = userVote;
-            StatusMessage = "";
-            SourceURL = sourceUrl;
-            PinnedEvents = UserEvents?.Where(ue => ue.IsPinned).Select(ue => ue).ToList();
-            DisplaySingles = displaySingles;
+    public class UserEventsData {
+        private readonly ILetsGame_EventManager _eventManager;
+        public UserEventsData(ILetsGame_EventManager eventManager) {
+            _eventManager = eventManager;
         }
 
-        /// <summary> 
-        ///     The URL of the page that created this model, it gets passed to pages that link from the partial 
-        ///     that displays this model so that they can return back to the page that they came from
-        /// </summary>
-		public string SourceURL { get; set; }
+        public async Task<bool> LoadData(LetsGame_User user,long? eventId,string returnURL) {
 
+            SourceURL = returnURL;
+            ActiveUser = user;
+            RenderType = EventPageRenderType.NONE;
+            PinnedEvents = ActiveUser.UserEvents?.Where(ue => ue.IsPinned).Select(ue => ue).ToList();
+
+            if (!eventId.HasValue) {
+                return await LoadEventList(user,returnURL);
+            } else {
+                return await LoadEvent(user.Id,(long)eventId,returnURL);
+            }
+        }
+        public async Task<bool> LoadEventList(LetsGame_User user,string returnURL) {
+            if (user == null) return false;
+
+            EventListData = new(user.UserEvents,returnURL);
+            RenderType = EventPageRenderType.LIST;
+
+            return true;
+        }
+        public async Task<bool> LoadEvent(string userId,long eventId,string returnURL) {
+            if (!_eventManager.UserIsAuthorized(eventId,userId)) {
+                return await LoadEventList(ActiveUser,returnURL);
+            }
+
+            LetsGame_UserEvent uev = await _eventManager.GetUserEventAsync(eventId,userId);
+            if (uev == null) return await LoadEventList(ActiveUser,returnURL);
+
+            LetsGame_UserPollVote pv;
+
+            if (uev.Event.Poll != null) {
+                pv = _eventManager.GetUserPollVote(userId,uev.Event.Poll.ID);
+                if (pv == null) return await LoadEventList(ActiveUser,returnURL);
+            }
+            else pv = null;
+
+            SingleData = new(uev,pv,returnURL);
+            RenderType = EventPageRenderType.SINGLE;
+
+            return true;
+        }
+        public async Task<bool> LoadPoll(LetsGame_User user, long pollId, string returnURL) {
+            
+            var p = await _eventManager.GetPollAsync(pollId);
+            if (p == null) return false;
+
+            var uv = _eventManager.GetUserPollVote(user.Id,pollId);
+
+            var ue = user.UserEvents.SingleOrDefault(ue => ue.EventID == p.EventID);
+            if (ue == null) return false;
+
+            Poll = new _PollModel(returnURL,p,uv,ue.IsCreator);
+            return true;
+        }
+        public bool LoadPinnedEvents(LetsGame_User user) {
+            var pevs = user.UserEvents?.Where(ue => ue.IsPinned).Select(ue => ue).ToList();
+
+            if (pevs == null) return false;
+
+            PinnedEvents = pevs;
+            return true;
+		}
+        public EventPageRenderType RenderType { get; private set; }
+        private LetsGame_User ActiveUser { get; set; }
+        public _SingleEventModel? SingleData { get; private set; }
+        public _EventListModel? EventListData { get; private set; }
+        public _PollModel Poll { get; set; }
+
+		/// <summary> 
+		///     The URL of the page that created this model, it gets passed to pages that link from the partial 
+		///     that displays this model so that they can return back to the page that they came from
+		/// </summary>
+		public string SourceURL { get; set; }
 
         /// <summary>
         ///     A message that is displayed by the status message partial of the current page
@@ -37,33 +98,9 @@ namespace LetsGame.Areas.Hub.Models
 		public string StatusMessage { get; set; }
 
         /// <summary>
-        ///     If this is true then the partial will be allowed to render the event as a single page
-        ///     Otherwise it is forced to render it as a list
-        /// </summary>
-		public bool DisplaySingles { get; set; }
-
-        /// <summary>
-        ///     The user events this partial is to display
-        /// </summary>
-		public List<LetsGame_UserEvent>? UserEvents { get; set; }
-
-        /// <summary>
         ///     Any pinned events within the list
         /// </summary>
         public List<LetsGame_UserEvent>? PinnedEvents { get; set; }
-
-        public LetsGame_Poll? EventPoll { get; set; }
-
-        public LetsGame_UserPollVote? UserVote { get; set; }
-        /// <summary>
-        ///     Returns the first event in the list. Returns null if the model is not set to display singles
-        /// </summary>
-        /// <returns>A single event to display</returns>
-        public LetsGame_UserEvent? GetSingle()
-        {
-            if (!IsValid) return null;
-            return DisplaySingles ? UserEvents?.First() : null;
-        }
 
         /// <summary>
         ///     The text that is displayed in the partials header
@@ -71,31 +108,13 @@ namespace LetsGame.Areas.Hub.Models
         /// <returns>The string that should be displayed</returns>
         public string GetName()
         {
-            var ev = GetSingle();
-            if (IsSingle && ev != null && DisplaySingles) return ev.Event.EventName;
-            else return "Your Events";
-        }
-
-        /// <summary>
-        ///     returns true if there is more than one events and the list is not null
-        /// </summary>
-        public bool IsList
-        {
-            get
-            {
-                return UserEvents == null ? false : UserEvents.Count > 1 ? true : false;
-            }
-        }
-
-        /// <summary>
-        ///     Returns true of there is only one entry in the list and its not null
-        /// </summary>
-        public bool IsSingle
-        {
-            get
-            {
-                return UserEvents == null ? false : UserEvents.Count == 1 ? true : false;
-            }
+            if (!IsValid) return string.Empty;
+			switch (RenderType) {
+				case EventPageRenderType.SINGLE:
+                    return SingleData.Event.EventName;
+				default:
+                    return "Your Events";
+			}
         }
 
 		/// <summary>
@@ -105,7 +124,7 @@ namespace LetsGame.Areas.Hub.Models
         {
             get
             {
-                return IsList || IsSingle;
+                return (SingleData != null || EventListData != null) || RenderType == EventPageRenderType.NONE;
             }
         }
 
@@ -119,5 +138,11 @@ namespace LetsGame.Areas.Hub.Models
                 return PinnedEvents == null ? false : PinnedEvents.Count == 0 ? false : true;
             }
         }
+    }
+
+    public enum EventPageRenderType {
+        NONE,
+        SINGLE,
+        LIST
     }
 }

@@ -6,22 +6,30 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LetsGame.Areas.Hub.Pages
 {
+    [Authorize]
     public class EventModel : PageModel
     {
-        private readonly ILetsGame_EventManager _eventManager;
-        private readonly UserManager<LetsGame_User> _userManager;
-        public EventModel(ILetsGame_EventManager eventManager, UserManager<LetsGame_User> userManager) {
+        //CONSTRUCTOR
+        public EventModel(ILetsGame_EventManager eventManager, 
+                          UserManager<LetsGame_User> userManager) 
+        {
             _eventManager = eventManager;
             _userManager = userManager;
         }
 
-        public UserEventsData EventsModel { get; private set; }
-       
-        public string EventName { get; set; }       
+		//MANAGERS
+		private readonly ILetsGame_EventManager _eventManager;
+		private readonly UserManager<LetsGame_User> _userManager;
 
+		//DATA
+		public UserEventsData PageData { get; private set; }
+        public string EventName { get; set; }
+
+        //GET
         public async Task<IActionResult> OnGetAsync(long? eventID) {
 
             var user = await _userManager.GetUserAsync(User);
@@ -30,50 +38,35 @@ namespace LetsGame.Areas.Hub.Pages
 				return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 			}
 
-            var success = await LoadDataAsync(user,eventID);
+            var success = await LoadDataAsync(user.Id,eventID);
 
 			//needs to change at some point
 			if (!success) {
 				return Redirect("./Index");
 			}
 
-            EventName = EventsModel.GetName();
+            EventName = PageData.GetName();
 
 			return Page();
         }
 
-        //returns true if data was loaded
-        private async Task<bool> LoadDataAsync(LetsGame_User user, long? eventID) {
+        //LOADING
+        private async Task<bool> LoadDataAsync(string userId, long? eventID) {
 
-            bool tryList = false;
-            //if there is an ID value, load a page that displays that event
-            if (eventID.HasValue) {
-                if (_eventManager.UserIsAuthorized((long)eventID,user)) {
-                    var data = await _eventManager.GetUserEventAsync((long)eventID,user);
-                    var upv = data.Event.Poll == null ? null : _eventManager.GetUserPollVote(user,data.Event.Poll.ID);
+            PageData = new UserEventsData(_eventManager);
+            var user = await _userManager.GetUserAsync(User);
 
-					EventsModel = new UserEventsData(_eventManager.ToList<LetsGame_UserEvent>(data),upv, Request.Path,true);
-                }
-                else {
-                    tryList = true;
-                }
-            }
+            var success = await PageData.LoadData(user, eventID, Request.Path);
 
-            //if no id is supplied then load the users events as a list
-            if (!eventID.HasValue || tryList) {
-                var data = await _eventManager.GetUserEventsAsync(user);
-                EventsModel = new UserEventsData(data,null,Request.Path,false) ;
-                if (tryList) EventsModel.StatusMessage = "Error: User not authorized to access that event.";
-            }
-
-            if (EventsModel.IsValid) {
+            if (PageData.IsValid && success) {
                 return true;
             } else {
-                EventsModel.StatusMessage = "Error: No event data could be loaded";
+                PageData.StatusMessage = "Error: No event data could be loaded";
                 return false;
             }
         }
 
+        //PAGE HANDLERS
         public IActionResult OnPostTogglePinned(long eventID, string returnUrl) {
             if (_eventManager.PinEvent(eventID,_userManager.GetUserId(User),out bool IsPinned))
                 Debug.WriteLine($"Event: {eventID} {(IsPinned ? "pinned" : "unpinned")} = {IsPinned}.");
@@ -82,9 +75,53 @@ namespace LetsGame.Areas.Hub.Pages
             _eventManager.Save();
             return Redirect(returnUrl);
 		}
+        public IActionResult OnPostToggledPinnedAjax(long eventID) {
 
+			if (_eventManager.PinEvent(eventID,_userManager.GetUserId(User),out bool IsPinned))
+				Debug.WriteLine($"Event: {eventID} {(IsPinned ? "pinned" : "unpinned")} = {IsPinned}.");
+			else {
+				Debug.WriteLine($"Event: {eventID} not found.");
+                return BadRequest();
+			}
+
+			_eventManager.Save();
+
+            return new JsonResult(IsPinned);
+        }
+		public async Task<IActionResult> OnPostDeletePoll(long pollID,string returnUrl) {
+			LetsGame_Poll Poll = await _eventManager.GetPollAsync(pollID);
+
+			if (!_eventManager.DeletePoll(Poll)) {
+				return Redirect(returnUrl);
+			}
+
+			await _eventManager.SaveAsync();
+
+			return Redirect(returnUrl);
+		}
+		public async Task<IActionResult> OnPostDeleteEvent(long eventID,string returnUrl) {
+			var user = _userManager.GetUserId(User);
+
+			if (!_eventManager.DeleteEvent(eventID,user)) {
+				return Redirect(returnUrl);
+			}
+
+			await _eventManager.SaveAsync();
+
+			return Redirect(returnUrl);
+		}
+		public async Task<PartialViewResult> OnGetPinnedEventsPartial() {
+			var user = await _userManager.GetUserAsync(User);
+            PageData = new(_eventManager);
+
+            var success = PageData.LoadPinnedEvents(user);
+
+            if (!success) return new PartialViewResult();
+
+            return Partial("_PinnedEvents",PageData.PinnedEvents);
+        }
 		public async Task<IActionResult> OnPostAddPoll(long eventID,string returnUrl) {
-            var user = await _userManager.GetUserAsync(User);
+            var user =_userManager.GetUserId(User);
             var ue = await _eventManager.GetUserEventAsync(eventID,user);
             if (ue != null && ue.IsCreator) {
                 await _eventManager.CreatePollAsync(ue);
@@ -92,7 +129,6 @@ namespace LetsGame.Areas.Hub.Pages
 			}
 			return Redirect(returnUrl);
 		}
-
 		public async Task<IActionResult> OnPostAddPollGame(string gameName,long pollID,string returnUrl) {
             if (gameName == "Enter Game Name" || gameName == "") {
                 return Redirect(returnUrl);
@@ -102,14 +138,36 @@ namespace LetsGame.Areas.Hub.Pages
 			await _eventManager.SaveAsync();
 			return Redirect(returnUrl);
 		}
-
         public async Task<IActionResult> OnPostCastVote(string returnURL, long pollID, long pollOptionID) {
-            var user = await _userManager.GetUserAsync(User);
-
+            var user = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(user)) return BadRequest();
  
             if(_eventManager.AddUserPollVote(user,pollID,pollOptionID)) await _eventManager.SaveAsync();
             return Redirect(returnURL);
             
         }
+        public async Task<IActionResult> OnPostCastVoteAjax(long pollID, long pollOptionID) {
+
+            var user = _userManager.GetUserId(User);
+
+            if (string.IsNullOrEmpty(user)) return BadRequest();
+
+            if (!_eventManager.AddUserPollVote(user,pollID,pollOptionID)) {
+                return BadRequest();
+            }
+
+            await _eventManager.SaveAsync();
+			return StatusCode(200);
+        }
+		public async Task<PartialViewResult> OnGetPollPartial(long pollID) {
+			var user = await _userManager.GetUserAsync(User);
+
+            PageData = new UserEventsData(_eventManager);
+            var success = await PageData.LoadPoll(user, pollID, Request.Path);
+
+            if (!success) return new PartialViewResult();
+
+			return Partial("_Poll",PageData.Poll);
+		}
 	}
 }

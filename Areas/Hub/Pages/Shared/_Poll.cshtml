@@ -3,75 +3,103 @@
 @using LetsGame.Areas.Hub.Models;
 @using LetsGame.Areas.Hub.Models.Controls;
 @using System.Globalization;
-@model PollModel
+@model _PollModel
 
 @*for polls we need controls to add poll, add game, delete poll, edit poll, vote for option*@
-<h3>@Model.Poll.PollDeadline</h3>
-<div class="row mx-0 my-4">
-	<div class="col flex-column">
-		<table class="table table-striped table-bordered align-middle">
-			<thead>
-				<tr class="align-middle">
-					@*For controlls drop down*@
-					<th scope="col">
-
-					</th>
-					<th scope="col">
-						Game
-					</th>
-					<th scope="col">
-						Votes
-					</th>
-					@*Pin Column*@
-					<th scope="col" class="text-center">
-						<a class="btn btn-danger" asp-area="Hub" asp-page="/Polls/Delete" asp-route-pollID="@Model.Poll.ID" asp-route-returnUrl="@Model.CurrentPage">Delete Poll</a>
-					</th>
-				</tr>
-			</thead>
-			<tbody>
-				@foreach (LetsGame_PollOption po in Model.Poll.PollOptions) {
-					<tr>
-						<th scope="row" class="text-center">
+@*<div class="col flex-column">*@
+	<table class="table table-striped table-bordered align-middle">
+		<thead>
+			<tr class="align-middle">
+				@*For controlls drop down*@
+				<th scope="col">
+					Image/Link
+				</th>
+				<th scope="col">
+					Game
+				</th>
+				<th scope="col">
+					Votes
+				</th>
+				@*Pin Column*@
+				<th scope="col" class="d-flex justify-content-center">
+					@if (Model.IsCreator) {
+						<button class="btn btn-sm btn-primary me-1" data-bs-toggle="modal" data-bs-target="#add-game"><i class="bi bi-plus-lg"></i></button>
+						<button class="btn btn-sm btn-danger me-1" data-bs-toggle="modal" data-bs-target="#delete-poll"><i class="bi bi-trash3"></i></button>
+						@*<a class="btn btn-sm btn-danger" asp-area="Hub" asp-page="/Polls/Delete" asp-route-pollID="@Model.Poll.ID" asp-route-returnUrl="@Model.CurrentPage"><i class="bi bi-trash3"></i></a>*@
+					}
+				</th>
+			</tr>
+		</thead>
+		<tbody id="poll-options">
+			@foreach (LetsGame_PollOption po in Model.Poll.PollOptions) {
+				<tr>
+					<td scope="row" class="text-center">
 					
-						</th>
-						<td>
-							@po.Game
-						</td>
-						<td>
-							@po.Votes
-						</td>
-						<td class="text-center">
-							@if (Model.HasVoted){
-								if (Model.UserVote.PollOptionID == po.ID) {
-									<form method="post" asp-area="Hub" asp-page="/Events/Index" asp-page-handler="CastVote" asp-route-returnURL="@Model.CurrentPage" asp-route-pollID="@Model.Poll.ID" asp-route-pollOptionID="@po.ID">
-										<button type="submit" class="btn btn-success">Your vote</button>
-									</form>
-								} else {
-									<form method="post" asp-area="Hub" asp-page="/Events/Index" asp-page-handler="CastVote" asp-route-returnURL="@Model.CurrentPage" asp-route-pollID="@Model.Poll.ID" asp-route-pollOptionID="@po.ID">
-										<button type="submit" class="btn btn-outline-success">Vote</button>
-									</form>
-								}
+					</td>
+					<td>
+						@po.Game
+					</td>
+					<td>
+						@po.Votes
+					</td>
+					<td class="d-flex justify-content-center">
+						@if (Model.HasVoted){
+							if (Model.UserVote.PollOptionID == po.ID) {
+								<button class="btn btn-vote btn-success" onclick="vote(@Model.Poll.ID, @po.ID)">Your Vote</button>
+								@Html.AntiForgeryToken()
 							} else {
-								<form method="post" asp-area="Hub" asp-page="/Events/Index" asp-page-handler="CastVote" asp-route-returnURL="@Model.CurrentPage" asp-route-pollID="@Model.Poll.ID" asp-route-pollOptionID="@po.ID">
-									<button type="submit" class="btn btn-outline-success">Vote</button>
-								</form>
+								<button class="btn btn-vote btn-outline-success" onclick="vote(@Model.Poll.ID, @po.ID)">CastVote</button>
+								@Html.AntiForgeryToken()
 							}
-						</td>
-					</tr>
-				}
-			</tbody>
-		</table>
+						} else {
+							<button class="btn btn-vote btn-outline-success" onclick="vote(@Model.Poll.ID, @po.ID)">CastVote</button>
+							@Html.AntiForgeryToken()
+						}
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+@*</div>*@
+
+<!--Modals-->
+<div class="modal fade" id="add-game" tabindex="-1" aria-labelledby="add-game-label" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="add-game-label">Add Game</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<form class="form-floating" method="post" asp-area="Hub" asp-page="/Events/Index" asp-page-handler="AddPollGame" asp-route-pollID="@Model.Poll.ID" asp-route-returnUrl="@Model.CurrentPage">
+				<div class="modal-body">
+					<input id="game-name" class="form-control" type="text" name="gameName" placeholder="Enter Game Name" />
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-primary">Add</button>
+				</div>
+			</form>
+		</div>
 	</div>
 </div>
-@if (Model.IsCreator) {
-	<form class="d-flex row" method="post" asp-area="Hub" asp-page="/Events/Index" asp-page-handler="AddPollGame" asp-route-pollID="@Model.Poll.ID" asp-route-returnUrl="@Model.CurrentPage">
-		<div class="col-8 d-flex flex-row">
-			<div class="p-2" style="flex:1 0 25%">
-				<input type="text" name="gameName" value="Enter Game Name">
+
+<div class="modal fade" id="delete-poll" tabindex="-1" aria-labelledby="delete-poll-label" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="delete-poll-label">Delete Poll</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
+				<div class="modal-body">
+					<h3>Are you sure?</h3>
+					<p>This action cannot be reversed.</p>
+				</div>
+			<form class="form-floating" method="post" asp-area="Hub" asp-page="/Events/Index" asp-page-handler="DeletePoll" asp-route-pollID="@Model.Poll.ID" asp-route-returnUrl="@Model.CurrentPage">
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-danger">Delete</button>
+				</div>
+			</form>
 		</div>
-		<div class="col-4 d-flex flex-row-reverse">
-			<button class="btn btn-outline-dark" type="submit">Add New Game</button>
-		</div>
-	</form>
-}
+	</div>
+</div>

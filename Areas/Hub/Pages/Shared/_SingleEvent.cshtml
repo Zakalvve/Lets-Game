@@ -3,22 +3,31 @@
 @using LetsGame.Areas.Hub.Models;
 @using LetsGame.Areas.Hub.Models.Controls;
 @using System.Globalization;
-@model EventModel
+@model _SingleEventModel
 
 <!---Display Date/Time Left-->
 <div class="row">
 	<div class="col d-flex justify-content-between">
-		<h3>@Model.EventDate</h3>
-		<h4 class="lead text-muted">Time till event: @Model.TimeToEvent</h4>
+		<h4>@Model.EventDate at @Model.EventTime</h4>
+		<h4 class="lead text-muted">Time until event: @Model.TimeToEvent</h4>
 	</div>
 </div>
 <!---Display Controls-->
 <div class="row">
-	<div class="d-flex flex-row-reverse">
-		@if (Model.UserEvent.IsCreator){
-			<partial name="Controls/_EventDropDownControls" model="@new EventButtonModel(Model.Event.ID, Model.CurrentPage)"/>
-		}
-		<partial name="Controls/_PinEvent" model="@new PinEventButtonModel(Model.UserEvent.IsPinned, Model.Event.ID, Model.CurrentPage)"/>
+	<div class="d-flex justify-content-between">
+		<div class="d-flex justify-content-end flex-grow-1">
+			<div class="me-1">
+				<partial name="Controls/_PinEvent" model="@new PinEventButtonModel(Model.UserEvent.IsPinned, Model.Event.ID, Model.CurrentPage)"/>
+			</div>
+			@if (Model.UserEvent.IsCreator){
+				<div class="me-1">
+					<partial name="Controls/_DeleteEvent" model="@new EventButtonModel(Model.Event.ID, Model.CurrentPage, ControlType.BUTTON)"/>
+				</div>
+				<div class="me-1">
+					<partial name="Controls/_UpdateEvent" model="@new EventButtonModel(Model.Event.ID, Model.CurrentPage, ControlType.BUTTON)"/>
+				</div>
+			}
+		</div>
 	</div>
 </div>
 <!---Display Description-->
@@ -31,7 +40,9 @@
 
 @if (Model.HasPoll)
 {
-	<partial name="_Poll" model="@new PollModel(Model.CurrentPage, Model.Poll, Model.UserVote, Model.UserEvent.IsCreator)"/>
+	<div id="event-poll" class="row mx-0 my-4">
+		<partial name="_Poll" model="@new _PollModel(Model.CurrentPage, Model.Poll, Model.UserVote, Model.UserEvent.IsCreator)"/>
+	</div>
 }
 else {
 	<div class="row mx-0 my-4">

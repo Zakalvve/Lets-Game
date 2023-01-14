@@ -25,18 +25,20 @@
 	</div>
 	<partial name="Controls/_UpdateEvent" model="@new EventButtonModel(null, Model.EventsModel.SourceURL)" />
 }
-else if (Model.EventsModel.IsSingle && Model.EventsModel.DisplaySingles) {
+else if (Model.EventsModel.RenderType == EventPageRenderType.SINGLE) {
 
 	//the event that we will display
-	LetsGame_UserEvent ue = Model.EventsModel.GetSingle();
+	LetsGame_UserEvent ue = Model.EventsModel.SingleData.UserEvent;
 
 	@if (ue != null) {
-		<partial name="_SingleEvent" model="new EventModel(ue, null,  Model.EventsModel.SourceURL)" />
+		<partial name="_SingleEvent" model="@Model.EventsModel.SingleData" />
 	}
 }
 else {
 	if (Model.EventsModel.HasPinnedEvents) {
-		<partial name="_PinnedEvents" model="Model.EventsModel.PinnedEvents" />
+		<div id="pinned-events" class="row py-3">
+			<partial name="_PinnedEvents" model="Model.EventsModel.PinnedEvents" />
+		</div>
 	}
-	<partial name="_EventList" model="new EventListModel(Model.EventsModel.UserEvents, Model.EventsModel.SourceURL)" />
+	<partial name="_EventList" model="@Model.EventsModel.EventListData" />
 }

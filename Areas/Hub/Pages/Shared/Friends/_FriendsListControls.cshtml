@@ -1,0 +1,14 @@
+﻿@using LetsGame.Areas.Identity.Data
+@using LetsGame.Services
+@model string?
+
+@if (String.IsNullOrEmpty(Model)){
+    <button onclick="displayAddFriend()" class="col btn btn-primary me-3">Add Friend</button>
+}
+else {
+    <button onclick="displayAddFriend()" class="col btn btn-primary me-3">Add Friend</button>
+    <form type="post" asp-area="Hub" asp-page="Friends/Index">
+        <input type="hidden" id="delete-friend" name="friendID" value="@Model"/>
+        <button type="submit" asp-page-handler="RemoveFriend" class="btn btn-danger">Remove Friend</button>
+    </form>
+}

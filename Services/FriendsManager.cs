@@ -54,6 +54,7 @@ namespace LetsGame.Services
 		/// <returns>TRUE if the request has been successfully sent. Returns FALSE if the requester and addressee are the same user or are null.</returns>
 		public bool SendFriendRequest(LetsGame_User requester,LetsGame_User addressee) {
 
+			if (requester == null || addressee == null) return false;
 			if (requester.Id == addressee.Id) return false;
 
 			LetsGame_Relationship friendRequest = new LetsGame_Relationship();
@@ -69,6 +70,22 @@ namespace LetsGame.Services
 		}
 
 		/// <summary>
+		/// Removes a the friend with the given ID from the given users friend list
+		/// </summary>
+		/// <param name="user"></param>
+		/// <param name="friendID"></param>
+		/// <returns></returns>
+		public bool RemoveFriend(LetsGame_User user, string friendID) {
+			if (user == null || friendID == null) return false;
+
+			LetsGame_Relationship relationship = user.Friends.SingleOrDefault(r => (r.AddresseeID == friendID && r.RequesterID == user.Id) || (r.AddresseeID == user.Id && r.RequesterID == friendID));
+			if (relationship == null) return false;
+
+			_context.dbUserRelationships.Remove(relationship);
+			_context.SaveChanges();
+			return true;
+		}
+		/// <summary>
 		/// Accepts a friend request from the requeter as the addressee
 		/// </summary>
 		/// <param name="addressee"></param>
@@ -76,7 +93,10 @@ namespace LetsGame.Services
 		/// <returns>TRUE if the request has been successfully accepted.</returns>
 		public bool AcceptRequest(LetsGame_User addressee,string requesterID) {
 
-			var relationship = _context.dbUserRelationships.Find(requesterID, addressee.Id);
+            if (requesterID == null || addressee == null) return false;
+            if (requesterID == addressee.Id) return false;
+
+            var relationship = _context.dbUserRelationships.Find(requesterID, addressee.Id);
 			if (relationship == null) return false;
 
 			relationship.IsPendingAccept = false;
@@ -92,7 +112,10 @@ namespace LetsGame.Services
 		/// <returns>TRUE if the request has been successfully declined</returns>
 		public bool DeclineRequest(LetsGame_User addressee, string requesterID) {
 
-			LetsGame_Relationship? relationship = _context.dbUserRelationships.Find(requesterID,addressee.Id);
+            if (requesterID == null || addressee == null) return false;
+            if (requesterID == addressee.Id) return false;
+
+            LetsGame_Relationship? relationship = _context.dbUserRelationships.Find(requesterID,addressee.Id);
 			if (relationship == null) return false;
 
 			_context.dbUserRelationships.Remove(relationship);

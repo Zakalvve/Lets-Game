@@ -25,34 +25,34 @@ namespace LetsGame.Data
 		//-----EVENTS-----
 
         //CREATE
-        public LetsGame_UserEvent? CreateEvent(LetsGame_Event ev, LetsGame_User user) {
-            var uEv = JoinEvent(ev,user,true);
+        public LetsGame_UserEvent? CreateEvent(LetsGame_Event ev, string userId) {
+            var uEv = JoinEvent(ev,userId,true);
             if (uEv == null) return null;
             _context.dbEvents.Add(ev);
             return uEv;
         }
 		//CREATE ASYNC
-		public async Task<LetsGame_UserEvent?> CreateEventAsync(LetsGame_Event ev, LetsGame_User user) {
-			var uEv = await JoinEventAsync(ev,user,true);
+		public async Task<LetsGame_UserEvent?> CreateEventAsync(LetsGame_Event ev, string userId) {
+			var uEv = await JoinEventAsync(ev,userId,true);
             if (uEv == null) return null;
             _context.dbEvents.Add(ev);
             return uEv;
 		}
 
         //READ
-		public LetsGame_UserEvent? GetUserEvent(long eventID,LetsGame_User user) {
+		public LetsGame_UserEvent? GetUserEvent(long eventID,string userId) {
 			if (eventID == 0) return null;
-            return _context.dbUserEvents.Include(ue => ue.Event).Single(ue => ue.EventID == eventID && ue.UserID == user.Id);
+            return _context.dbUserEvents.Include(ue => ue.Event).Single(ue => ue.EventID == eventID && ue.UserID == userId);
 		}
-		public List<LetsGame_UserEvent?> GetUserEvents(LetsGame_User user) {
-            return _context.dbUserEvents.Include(ue => ue.Event).Where(ue => ue.UserID == user.Id).ToList();
+		public List<LetsGame_UserEvent?> GetUserEvents(string userId) {
+            return _context.dbUserEvents.Include(ue => ue.Event).Where(ue => ue.UserID == userId).ToList();
 		}
 		//READ ASYNC
-		public async Task<LetsGame_UserEvent?> GetUserEventAsync(long eventID, LetsGame_User user) {
-            return await _context.dbUserEvents.Include(ue => ue.Event).SingleAsync(ue => ue.EventID == eventID && ue.UserID == user.Id);
+		public async Task<LetsGame_UserEvent?> GetUserEventAsync(long eventID, string userId) {
+            return await _context.dbUserEvents.Include(ue => ue.Event).SingleAsync(ue => ue.EventID == eventID && ue.UserID == userId);
 		}
-		public async Task<List<LetsGame_UserEvent?>> GetUserEventsAsync(LetsGame_User user) {
-            return await _context.dbUserEvents.Include(ue => ue.Event).Where(ue => ue.UserID == user.Id).ToListAsync();
+		public async Task<List<LetsGame_UserEvent?>> GetUserEventsAsync(string userId) {
+            return await _context.dbUserEvents.Include(ue => ue.Event).Where(ue => ue.UserID == userId).ToListAsync();
 		}
 
 		//UPDATE
@@ -60,13 +60,9 @@ namespace LetsGame.Data
 			_context.Attach(ev).State = EntityState.Modified;
         }
 
-		public void UpdateEvent(LetsGame_Event ev,Expression<Func<LetsGame_Event,object>> properties) {
-            
-        }
-
 		//DELETE
-        public bool DeleteEvent(long eventID, LetsGame_User user) {
-			var ev = GetUserEvent(eventID,user);
+        public bool DeleteEvent(long eventID, string userId) {
+			var ev = GetUserEvent(eventID,userId);
 
 			if (ev == null) return false;
 			if (!ev.IsCreator) return false;
@@ -77,8 +73,8 @@ namespace LetsGame.Data
 
             return true;
         }
-		public async Task<bool> DeleteEventAsync(long eventID,LetsGame_User user) {
-			var ev = await GetUserEventAsync(eventID,user);
+		public async Task<bool> DeleteEventAsync(long eventID,string userId) {
+			var ev = await GetUserEventAsync(eventID,userId);
 
 			if (ev == null) return false;
 			if (!ev.IsCreator) return false;
@@ -93,7 +89,7 @@ namespace LetsGame.Data
 		//PINNING
 		public bool PinEvent(long eventID,string userID, out bool IsPinned) {
 			IsPinned = false;
-			if (userID.IsNullOrEmpty()) return false;
+			if (string.IsNullOrEmpty(userID)) return false;
 
             var ue = _context.dbUserEvents.Find(userID,eventID);
             if (ue == null) return false;
@@ -115,33 +111,39 @@ namespace LetsGame.Data
 		}
 
 		//JOINING
-		public bool JoinEvent(long eventID,LetsGame_User user) {
+		public bool JoinEvent(long eventID,string userId) {
             //test a version that uses ID's if it works it might be better as it advoids loading an event when we don't need to
-            return JoinEvent(GetUserEvent(eventID, user).Event,user,false) != null;
+            return JoinEvent(GetUserEvent(eventID, userId).Event,userId,false) != null;
         }
-        public async Task<bool> JoinEventAsync(long eventID,LetsGame_User user) {
-			return await JoinEventAsync(GetUserEvent(eventID,user).Event,user,false) != null;
+        public async Task<bool> JoinEventAsync(long eventID,string userId) {
+			return await JoinEventAsync(GetUserEvent(eventID,userId).Event,userId,false) != null;
 		}
-		private LetsGame_UserEvent? JoinEvent(LetsGame_Event ev,LetsGame_User user,bool AsCreator) {
+		private LetsGame_UserEvent? JoinEvent(LetsGame_Event ev, string userId, bool AsCreator) {
 
-			if (ev == null || user == null) return null;
+			if (ev == null || string.IsNullOrEmpty(userId)) return null;
 
 			var uEv = new LetsGame_UserEvent(AsCreator) {
 				Event = ev
 			};
+
+			var user = _context.Users.Find(userId);
+			if (user == null) return null;
 
 			uEv.User = user;
 			_context.dbUserEvents.Add(uEv);
 
 			return uEv;
 		}
-		private async Task<LetsGame_UserEvent?> JoinEventAsync(LetsGame_Event ev,LetsGame_User user,bool AsCreator) {
+		private async Task<LetsGame_UserEvent?> JoinEventAsync(LetsGame_Event ev, string userId, bool AsCreator) {
 
-			if (ev == null || user == null) return null;
+			if (ev == null || string.IsNullOrEmpty(userId)) return null;
 
 			var uEv = new LetsGame_UserEvent(AsCreator) {
 				Event = ev
 			};
+
+			var user = await _context.Users.FindAsync(userId);
+			if (user == null) return null;
 
 			uEv.User = user;
 			await _context.dbUserEvents.AddAsync(uEv);
@@ -160,8 +162,8 @@ namespace LetsGame.Data
 
 
         //AUTHORIZATION
-        public bool UserIsAuthorized(long eventID,LetsGame_User user) {
-			var ue = _context.dbUserEvents.Find(user.Id,eventID);
+        public bool UserIsAuthorized(long eventID,string userId) {
+			var ue = _context.dbUserEvents.Find(userId,eventID);
 			return ue == null ? false : true;
 		}
         public List<T>? ToList<T>(T data) {
@@ -224,44 +226,50 @@ namespace LetsGame.Data
 			return true;
 		}
 
-		public bool AddUserPollVote(LetsGame_User user, long pollID, long pollOptionID) {
+		public bool AddUserPollVote(string userId, long pollID, long pollOptionID) {
 
 			LetsGame_UserPollVote upv;
 			LetsGame_Poll? p = GetPoll(pollID);
 
 			//if user has voted previously a vote object already exists for them
-			if (UserPollVoteExists(user,pollID)) {
-				upv = _context.dbPollVotes.Find(user.Id,pollID);
+			if (UserPollVoteExists(userId,pollID)) {
+				upv = _context.dbPollVotes.Find(userId,pollID);
 				if (upv.PollOptionID == pollOptionID) return false;
 			}
 			else {
-				upv = CreateUserPollVote(user,p);
+				upv = CreateUserPollVote(userId,p);
 				if (upv == null) return false;
 			}
 
 			upv.PollOption = p.PollOptions.Find(po => po.ID == pollOptionID);
 			return true;
 		}
-		public LetsGame_UserPollVote? GetUserPollVote(LetsGame_User user, long pollID) {
-			LetsGame_UserPollVote upv = _context.dbPollVotes.Find(user.Id,pollID);
+		public LetsGame_UserPollVote? GetUserPollVote(string userId, long pollID) {
+			LetsGame_UserPollVote upv = _context.dbPollVotes.Find(userId,pollID);
 			if (upv == null) {
-				upv = CreateUserPollVote(user,GetPoll(pollID));
+				upv = CreateUserPollVote(userId,GetPoll(pollID));
 			}
 			return upv;
 		}
 
-		private LetsGame_UserPollVote CreateUserPollVote(LetsGame_User user, LetsGame_Poll poll) {
-			if (user == null || poll == null) return null;
+		private LetsGame_UserPollVote CreateUserPollVote(string userId, LetsGame_Poll poll) {
+			if (string.IsNullOrEmpty(userId) || poll == null) return null;
+
+			var user = _context.Users.Find(userId);
+			if (user == null) return null;
+
 			LetsGame_UserPollVote upv = new LetsGame_UserPollVote();
 			upv.Poll = poll;
+
+
 			upv.Voter = user;
 			_context.dbPollVotes.Add(upv);
 			Save();
 			return upv;
 
 		}
-		private bool UserPollVoteExists(LetsGame_User user, long pollID) {
-			return _context.dbPollVotes.Find(user.Id,pollID) != null;
+		private bool UserPollVoteExists(string userId, long pollID) {
+			return _context.dbPollVotes.Find(userId,pollID) != null;
 		}
         private bool CanCreatePoll(LetsGame_UserEvent ue) {
 			return ue.IsCreator;

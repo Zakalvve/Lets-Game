@@ -8,27 +8,38 @@
 
 <div class="row">
 	<div class="col-md-6">
+		@if (Model.IsCreate){
+			<h1>Create a new Event</h1>
+			<h3 class="lead">Fill in the following fields to create a new event.</h3>
+		} else {
+			<h1>Event Settings</h1>
+		}
 		<form method="post" asp-route-isCreate="@Model.IsCreate" asp-route-returnUrl="@Model.ReturnURL">
-			<div class="form-floating">
-				<input asp-for="Event.EventName" class="form-control" />
+			<div class="mb-3 form-floating">
+				<input asp-for="Event.EventName" placeholder="@Model.Event.EventName" class="form-control" />
 				<label asp-for="Event.EventName" class="form-label">Event Name</label>
 			</div>
 
-			 <div class="form-floating">
-				<input asp-for="Event.Description" class="form-control" />
+			<div class="mb-3 form-floating">
+				<textarea asp-for="Event.Description" class="form-control" style="min-height:8rem;"></textarea>
 				<label asp-for="Event.Description" class="form-label">Event Description</label>
+				<span asp-validation-for="Event.Description" class="text-danger"></span>
 			</div>
-			 <div class="form-floating">
+			<div class="mb-3 form-floating">
 				<input asp-for="Event.EventDateTime" class="form-control" />
-				<label asp-for="Event.EventDateTime" class="form-label">Event Date</label>
+				<label asp-for="Event.EventDateTime" placeholder="@Model.Event.EventDateTime" class=" form-label">Event Date</label>
+				<span asp-validation-for="Event.EventDateTime" class="text-danger"></span>
 			</div>
-			 <div class="form-floating">
-				<input asp-for="Event.Location" class="form-control" />
+			<div class="mb-3 form-floating">
+				<input asp-for="Event.Location" placeholder="@Model.Event.Location" class=" form-control" />
 				<label asp-for="Event.Location" class="form-label">Event Location</label>
 			</div>
 			<input type="hidden" asp-for="Event.ID" />
 			<input type="hidden" asp-for="Event.Poll" />
-			<button type="submit" class="btn btn-primary">@(Model.IsCreate ? "Create" : "Save")</button>
+			<div class="d-flex">
+				<button type="submit" class="btn btn-primary me-2">@(Model.IsCreate ? "Create" : "Save")</button>
+				<button type="submit" asp-page-handler="Cancel" asp-route-returnUrl="@Model.ReturnURL" class="btn btn-secondary">Cancel</button>
+			</div>
 		</form>
 	</div>
 </div>

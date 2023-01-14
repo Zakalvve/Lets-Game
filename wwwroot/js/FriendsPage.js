@@ -37,11 +37,12 @@ function displayChat(filter, e, id) {
 	//ajax to recover chat for friend with id
 	$("#display").addClass("flex-column-reverse");
 	$("#display").load(`/Hub/Friends/Index?handler=FriendChatPartial&userId=${id}`);
+	$("#friend-controls").load(`/Hub/Friends/Index?handler=FriendsListControlsPartial&friendId=${id}`)
 }
 function displayFriendRequest(filter, e, id) {
 	toggleActive(filter, e);
 	$("#display").removeClass("flex-column-reverse");
-	$("#display").load(`/Hub/Friends/Index?handler=FriendRequestPartial&friendId=${id}`); 
+	$("#display").load(`/Hub/Friends/Index?handler=FriendRequestPartial&friendId=${id}`);
 }
 
 function displayAddFriend() {

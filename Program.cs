@@ -20,6 +20,7 @@ builder.Services.AddTransient<IFriendsService,FriendsManager>();
 builder.Services.AddLogging();
 
 builder.Services.AddRazorPages();
+builder.Services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
 
 //build the host
 var app = builder.Build();
