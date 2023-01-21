@@ -58,3 +58,8 @@ function displayUsers(username) {
 	$("#search-results").load(`/Hub/Friends/Index?handler=SearchPartial&input=${username}`);
 	$("#search-results").css("border", "1");
 }
+
+$("#submit-add-friend").click(function () {
+	var value = $("#users").val();
+	alert($('#users [value="' + value + '"]').data('value'));
+});

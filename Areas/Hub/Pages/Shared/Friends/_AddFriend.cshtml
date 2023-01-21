@@ -1,10 +1,14 @@
 ﻿@using LetsGame.Areas.Identity.Data
 @using LetsGame.Services
 @using LetsGame.Data.Models
+@model List<FriendData>
 
 <form type="post" asp-area="Hub" asp-page="Friends/Index">
-    <div id="search-results"></div>
-    <input type="text" size="30" onkeyup="displayUsers(this.value)" />
-    <input type="hidden" id="selection" name="friendID" value="" />
-    <button type="submit" asp-page-handler="AddFriend" class="btn btn-danger">Add Friend</button>
+    @*<div id="search-results"></div>*@
+    @*<input type="text" size="30" onkeyup="displayUsers(this.value)" />*@
+    <input list="users" name="friendID" onkeyup="displayUsers(this.value)">
+    <div id="search-results">
+        <partial name="Friends/_UserSearchResults" model="@Model" />
+    </div>
+    <button id="submit-add-friend" onclick="submitAddFriend()" type="submit" asp-page-handler="AddFriend" class="btn btn-danger">Add Friend</button>
 </form>

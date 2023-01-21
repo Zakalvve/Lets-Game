@@ -80,8 +80,10 @@ namespace LetsGame.Areas.Hub.Pages.Friends
         /// Fetches a partial view that renders the interface for sending a friend request
         /// </summary>
         /// <returns></returns>
-        public PartialViewResult OnGetAddFriendPartial() {
-            return Partial("Friends/_AddFriend");
+        public async Task<PartialViewResult> OnGetAddFriendPartial(string input) {
+            if (input == null) input = string.Empty;
+            var user = await _userManager.GetUserAsync(User);
+            return Partial("Friends/_AddFriend",GetPossibleUsers(user, input));
         }
 
         /// <summary>
@@ -93,20 +95,30 @@ namespace LetsGame.Areas.Hub.Pages.Friends
 
 			var user = await _userManager.GetUserAsync(User);
 
-            //Gets a list of ID's for users that are already in a relationship with the current user.
-            //Used to cross reference generated list and avoid adding a friend twice.
-            var currentRelationships = _friendsManager.GetAllRelationships(user).Select(r  => r.ID);
+            if (input == null) input = string.Empty;
+            List<FriendData> users = GetPossibleUsers(user,input);
+
+			//return the partial with the supplied list
+			return Partial("Friends/_UserSearchResults",users);
+        }
+
+        public List<FriendData> GetPossibleUsers(LetsGame_User user, string input) {
+
+            if (input.Length < 2) return new List<FriendData>();
+
+			//Gets a list of ID's for users that are already in a relationship with the current user.
+			//Used to cross reference generated list and avoid adding a friend twice.
+			var currentRelationships = _friendsManager.GetAllRelationships(user).Select(r => r.ID);
 
 			//create list of possible users to befriend
 			List<FriendData> users = _userManager.Users
-                .Where(u => u.NormalizedUserName.StartsWith(input) 
-                            && u.Id != user.Id 
-                            && !currentRelationships.Contains(u.Id))
-                .Select(u => new FriendData(u.Id,u.UserName)).ToList();
+				.Where(u => u.NormalizedUserName.StartsWith(input)
+							&& u.Id != user.Id
+							&& !currentRelationships.Contains(u.Id))
+				.Select(u => new FriendData(u.Id,u.UserName)).ToList();
 
-            //return the partial with the supplied list
-            return Partial("Friends/_UserSearchResults",users);
-        }
+            return users;
+		}
 
         public PartialViewResult OnGetFriendsListControlsPartial(string? friendID) {
             return Partial("Friends/_FriendsListControls",friendID);
