@@ -20,6 +20,7 @@ namespace LetsGame.Data
         public DbSet<LetsGame_UserChat> dbUserChats { get; set; }
         public DbSet<LetsGame_Chat> dbChats { get; set; }
         public DbSet<LetsGame_ChatMessage> dbChatMessages { get; set; }
+        public DbSet<LetsGame_EventInvite> dbEventInvites { get; set; }
 
 
         #region Required
@@ -116,7 +117,22 @@ namespace LetsGame.Data
 
                     b.ToTable("LetsGameEvents");
                 });
-            
+
+            builder.Entity<LetsGame_EventInvite>(
+                b => {
+                    b.HasOne(ei => ei.Event)
+                        .WithMany()
+                        .HasForeignKey(ei => ei.EventID);
+
+                    b.HasOne(ei => ei.User)
+                        .WithMany()
+                        .HasForeignKey(ei => ei.UserID);
+
+                    b.HasKey(k => new { k.EventID,k.UserID });
+
+                    b.ToTable("EventInvites");
+                });
+
             builder.Entity<LetsGame_Poll>(
                 b => {
                     b.Property(p => p.ID)

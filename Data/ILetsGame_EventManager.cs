@@ -28,9 +28,18 @@ namespace LetsGame.Data
         public bool PinEvent(long eventID, string userID, out bool IsPinned);
 		public Task<bool> PinEventAsync(long eventID,string userID);
 
+        //PROMOTION
+        public bool PromoteUserToCreator(long eventID,string oldCreator,string newCreator);
+        public Task<bool> PromoteUserToCreatorAsync(long eventID,string oldCreator,string newCreator);
+		//INVITING
+		public bool InviteFriend(long eventID,string userID);
+        public bool HasInvite(long eventID,string userID);
+
 		//JOINING
 		public bool JoinEvent(long eventID,string userId);
 		public Task<bool> JoinEventAsync(long eventID,string userId);
+        public bool LeaveEvent(long eventID,string userId);
+        public Task<bool> LeaveEventAsync(long eventID,string userId);
 
 		//SAVE
 		public void Save();

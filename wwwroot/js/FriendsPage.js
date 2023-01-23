@@ -32,6 +32,20 @@ function displaySendRequests(filter, e) {
 	$("#display").html("");
 	$("#page-list").load(`/Hub/Friends/Index?handler=SentRequestsListPartial`);
 }
+
+function displayEventRequests(filter, e) {
+	toggleActive(filter, e);
+	//ajax to display friend requests
+	$("#display").html("");
+	$("#page-list").load(`/Hub/Friends/Index?handler=EventRequestsListPartial`);
+}
+
+function displayAcceptEventRequest(filter, e, eventId) {
+	toggleActive(filter, e);
+	$("#display").addClass("flex-column-reverse");
+	$("#display").load(`/Hub/Friends/Index?handler=AcceptEventRequestPartial&eventId=${eventId}`);
+}
+
 function displayChat(filter, e, id) {
 	toggleActive(filter, e);
 	//ajax to recover chat for friend with id
@@ -50,16 +64,8 @@ function displayAddFriend() {
 	$("#display").load(`/Hub/Friends/Index?handler=AddFriendPartial`);
 }
 
-function displayUsers(username) {
-	if (username.length == 0) {
-		$("#search-results").html("");
-		$("#search-results").css("border", "0");
-	}
-	$("#search-results").load(`/Hub/Friends/Index?handler=SearchPartial&input=${username}`);
-	$("#search-results").css("border", "1");
+function submitFriendRequest() {
+	value = $("#selection").val();
+	$("#id-value").val($('#users [value="' + value + '"]').data('value'));
+	$("#page-form").submit();
 }
-
-$("#submit-add-friend").click(function () {
-	var value = $("#users").val();
-	alert($('#users [value="' + value + '"]').data('value'));
-});

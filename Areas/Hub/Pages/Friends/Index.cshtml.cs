@@ -3,6 +3,7 @@ using LetsGame.Areas.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using LetsGame.Services;
+using LetsGame.Data;
 
 namespace LetsGame.Areas.Hub.Pages.Friends
 {
@@ -13,9 +14,13 @@ namespace LetsGame.Areas.Hub.Pages.Friends
         /// </summary>
 		public readonly UserManager<LetsGame_User> _userManager;
         private readonly IFriendsService _friendsManager;
-        public IndexModel(UserManager<LetsGame_User> userManager,IFriendsService friendsManager) {
+		private readonly ILetsGame_EventManager _eventManager;
+		private readonly ApplicationDbContext _context;
+        public IndexModel(UserManager<LetsGame_User> userManager,IFriendsService friendsManager,ILetsGame_EventManager eventManager, ApplicationDbContext context) {
             _userManager = userManager;
             _friendsManager = friendsManager;
+            _eventManager = eventManager;
+            _context = context;
         }
 
         /// <summary>
@@ -99,12 +104,10 @@ namespace LetsGame.Areas.Hub.Pages.Friends
             List<FriendData> users = GetPossibleUsers(user,input);
 
 			//return the partial with the supplied list
-			return Partial("Friends/_UserSearchResults",users);
+			return Partial("_UserSearchResults",users);
         }
 
         public List<FriendData> GetPossibleUsers(LetsGame_User user, string input) {
-
-            if (input.Length < 2) return new List<FriendData>();
 
 			//Gets a list of ID's for users that are already in a relationship with the current user.
 			//Used to cross reference generated list and avoid adding a friend twice.
@@ -156,7 +159,6 @@ namespace LetsGame.Areas.Hub.Pages.Friends
             return Redirect("/Hub/Friends");
         }
 
-
 		public async Task<IActionResult> OnPostRemoveFriend(string friendID) {
 			var user = await _userManager.GetUserAsync(User);
 
@@ -165,6 +167,43 @@ namespace LetsGame.Areas.Hub.Pages.Friends
             }
 
 			return Redirect("/Hub/Friends");
+		}
+
+		public async Task<PartialViewResult> OnGetEventRequestsListPartial() {
+			var user = await _userManager.GetUserAsync(User);
+            var invites = _context.dbEventInvites.Where(ei => ei.UserID == user.Id).ToList();
+
+            return Partial("Friends/_EventRequestList",invites);
+		}
+
+		public async Task<PartialViewResult> OnGetAcceptEventRequestPartial(long eventID) {
+            return Partial("Friends/_EventRequestAccept",eventID);
+		}
+
+		public async Task<IActionResult> OnPostAcceptEventRequest(long eventID) {
+            var user = await _userManager.GetUserAsync(User);
+            var invite = _context.dbEventInvites.Find(eventID,user.Id);
+
+			if (invite != null) {
+                await _eventManager.JoinEventAsync(eventID,user.Id);
+                await _eventManager.SaveAsync();
+
+				_context.dbEventInvites.Remove(invite);
+				await _context.SaveChangesAsync();
+			}
+
+			return Redirect("/Hub/Friends");
+		}
+		public async Task<IActionResult> OnPostDeclineEventRequest(long eventID) {
+			var user = await _userManager.GetUserAsync(User);
+			var invite = _context.dbEventInvites.Find(eventID,user.Id);
+
+            if (invite != null) {
+                _context.dbEventInvites.Remove(invite);
+                await _context.SaveChangesAsync();
+            }
+
+            return Redirect("/Hub/Friends");
 		}
 	}
 }

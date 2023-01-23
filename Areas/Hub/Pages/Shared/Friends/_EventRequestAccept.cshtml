@@ -1,0 +1,9 @@
+﻿@using LetsGame.Areas.Identity.Data
+@using LetsGame.Services
+@using LetsGame.Data.Models
+@model long
+
+<form asp-area="Hub" asp-page="Friends/Index">
+    <button type="submit" asp-page-handler="AcceptEventRequest" asp-route-eventID="@Model" class="btn btn-success">Accept Request</button>
+    <button type="submit" asp-page-handler="DeclineEventRequest" asp-route-eventID="@Model" class="btn btn-danger">Decline Request</button>
+</form>

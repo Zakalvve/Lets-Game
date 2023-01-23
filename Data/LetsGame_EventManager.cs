@@ -65,10 +65,8 @@ namespace LetsGame.Data
 			var ev = GetUserEvent(eventID,userId);
 
 			if (ev == null) return false;
-			if (!ev.IsCreator) return false;
 
 			if (ev.Event.Poll != null) _context.dbPolls.Remove(ev.Event.Poll);
-
 			_context.dbEvents.Remove(ev.Event);
 
             return true;
@@ -77,7 +75,6 @@ namespace LetsGame.Data
 			var ev = await GetUserEventAsync(eventID,userId);
 
 			if (ev == null) return false;
-			if (!ev.IsCreator) return false;
 
 			if (ev.Event.Poll != null) _context.dbPolls.Remove(ev.Event.Poll);
 
@@ -110,13 +107,66 @@ namespace LetsGame.Data
 			return true;
 		}
 
+		//INVITING
+
+		public bool InviteFriend(long eventID,string userID) {
+
+			var ev = _context.dbEvents.Find(eventID);
+			if (ev == null) return false;
+
+			var user = _context.Users.Find(userID);
+			if (user == null) return false;
+
+			LetsGame_EventInvite invite = new LetsGame_EventInvite();
+
+			invite.Event = ev;
+			invite.User = user;
+
+			_context.dbEventInvites.Add(invite);
+			_context.SaveChanges();
+
+			return true;
+		}
+
+		public bool HasInvite(long eventID,string userID) {
+			return _context.dbEventInvites.Find(eventID,userID) != null;
+		}
+
+		//PROMOTION
+		public bool PromoteUserToCreator(long eventID, string oldCreator, string newCreator) {
+			var oldUev = GetUserEvent(eventID,oldCreator);
+			var newUev = GetUserEvent(eventID,newCreator);
+
+			if (oldUev == null || newUev == null) return false;
+
+			if (!oldUev.IsCreator) return false;
+
+			oldUev.IsCreator = false;
+			newUev.IsCreator = true;
+
+			return true;
+		}
+		public async Task<bool> PromoteUserToCreatorAsync(long eventID,string oldCreator,string newCreator) {
+			var oldUev = await GetUserEventAsync(eventID,oldCreator);
+			var newUev = await GetUserEventAsync(eventID,newCreator);
+
+			if (oldUev == null || newUev == null) return false;
+
+			if (!oldUev.IsCreator) return false;
+
+			oldUev.IsCreator = false;
+			newUev.IsCreator = true;
+
+			return true;
+		}
+
 		//JOINING
 		public bool JoinEvent(long eventID,string userId) {
             //test a version that uses ID's if it works it might be better as it advoids loading an event when we don't need to
-            return JoinEvent(GetUserEvent(eventID, userId).Event,userId,false) != null;
+            return JoinEvent(_context.dbEvents.Find(eventID),userId,false) != null;
         }
         public async Task<bool> JoinEventAsync(long eventID,string userId) {
-			return await JoinEventAsync(GetUserEvent(eventID,userId).Event,userId,false) != null;
+			return await JoinEventAsync(_context.dbEvents.Find(eventID),userId,false) != null;
 		}
 		private LetsGame_UserEvent? JoinEvent(LetsGame_Event ev, string userId, bool AsCreator) {
 
@@ -131,7 +181,6 @@ namespace LetsGame.Data
 
 			uEv.User = user;
 			_context.dbUserEvents.Add(uEv);
-
 			return uEv;
 		}
 		private async Task<LetsGame_UserEvent?> JoinEventAsync(LetsGame_Event ev, string userId, bool AsCreator) {
@@ -147,9 +196,29 @@ namespace LetsGame.Data
 
 			uEv.User = user;
 			await _context.dbUserEvents.AddAsync(uEv);
-			await _context.dbEvents.AddAsync(ev);
-
 			return uEv;
+		}
+
+		public bool LeaveEvent(long eventID,string userId) {
+			LetsGame_UserEvent uev = GetUserEvent(eventID,userId);
+			if (uev == null) return false;
+			if (uev.IsCreator) {
+				DeleteEvent(eventID,userId);
+			} else {
+				_context.dbUserEvents.Remove(uev);
+			}
+			return true;
+		}
+		public async Task<bool> LeaveEventAsync(long eventID,string userId) {
+			LetsGame_UserEvent uev = await GetUserEventAsync(eventID,userId);
+			if (uev == null) return false;
+			if (uev.IsCreator) {
+				await DeleteEventAsync(eventID,userId);
+			}
+			else {
+				_context.dbUserEvents.Remove(uev);
+			}
+			return true;
 		}
 
 		//SAVE

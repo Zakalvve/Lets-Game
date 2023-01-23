@@ -93,11 +93,6 @@ namespace LetsGame.Areas.Hub.Models
 		public string SourceURL { get; set; }
 
         /// <summary>
-        ///     A message that is displayed by the status message partial of the current page
-        /// </summary>
-		public string StatusMessage { get; set; }
-
-        /// <summary>
         ///     Any pinned events within the list
         /// </summary>
         public List<LetsGame_UserEvent>? PinnedEvents { get; set; }

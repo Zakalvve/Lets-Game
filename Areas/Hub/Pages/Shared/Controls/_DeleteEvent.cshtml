@@ -1,4 +1,5 @@
 ﻿@using LetsGame.Areas.Hub.Models.Controls;
+@using LetsGame.Services
 @model EventButtonModel
 
 
@@ -12,15 +13,14 @@
 				<h1 class="modal-title fs-5" id="delete-event-label">Delete Event</h1>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
-				<div class="modal-body">
-					<h3>Are you sure?</h3>
-					<p>This action cannot be reversed. In addition all current participants of this event will lose access 
-					   to it. If you prefer you can leave the event yourself by promoting someone else to be the creator.</p>
-				</div>
+			<div class="modal-body">
+				<h3>Are you sure?</h3>
+				<p>This action cannot be reversed. In addition all current participants of this event will lose access 
+					to it as well.</p>
+			</div>
 			<form class="form-floating" method="post" asp-area="Hub" asp-page="/Events/Index" asp-page-handler="DeleteEvent" asp-route-eventID="@Model.EventID" asp-route-returnUrl="@Model.ReturnURL">
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-					<button type="submit" class="btn btn-success">Promote User</button>
 					<button type="submit" class="btn btn-danger">Delete</button>
 				</div>
 			</form>

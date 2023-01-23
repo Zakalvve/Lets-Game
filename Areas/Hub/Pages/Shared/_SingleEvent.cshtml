@@ -1,4 +1,5 @@
 ﻿@using LetsGame.Data.Models;
+@using LetsGame.Services;
 @using LetsGame.Areas.Identity.Data;
 @using LetsGame.Areas.Hub.Models;
 @using LetsGame.Areas.Hub.Models.Controls;
@@ -59,22 +60,36 @@ else {
 }
 <!---Display Participants-->
 <div class="row">
-	<div class="d-flex col justify-content-start">
-		<div class="lead text-muted pe-2">
-			<strong>Creator:</strong> <span class="text-primary">@Model.Event.UserEvents.Single(ue => ue.IsCreator).User.UserName</span>
-		</div>
-		@if (Model.Event.UserEvents.Count > 1) {
+	<div class="col">
+		<div class="d-flex justify-content-start">
 			<div class="lead text-muted pe-2">
-				<strong>Particiants:</strong>
+				<strong>Creator:</strong> <span class="text-primary">@Model.Event.UserEvents.Single(ue => ue.IsCreator).User.UserName</span>
 			</div>
-		}
-
-		@foreach(LetsGame_UserEvent ue in Model.Event.UserEvents) {
-			if (!ue.IsCreator)
-			{
-				<div class="lead text-muted pe-2">@ue.User.UserName</div>
+			@if (Model.Event.UserEvents.Count > 1) {
+				<div class="lead text-muted pe-2">
+					<strong>Particiants:</strong>
+				</div>
 			}
-		}
+
+			@foreach(LetsGame_UserEvent ue in Model.Event.UserEvents) {
+				if (!ue.IsCreator)
+				{
+					<div class="lead text-muted pe-2">@ue.User.UserName</div>
+				}
+			}
+		</div>
+		<form id="page-form" type="post" asp-area="Hub" asp-page="Events/Index">
+			<input id="selection" list="users" onfocus="displayFriends(this.value, @Model.Event.ID)" onkeyup="displayFriends(this.value, @Model.Event.ID)">
+			<input id="id-value" type="hidden" name="friendID" />
+			<input type="hidden" name="eventID" value="@Model.Event.ID" />
+			<div id="search-results">
+				<partial name="_UserSearchResults" model="@new List<FriendData>()" />
+			</div>
+			<button type="submit" onclick="submitEventInvite()" asp-page-handler="EventInvite" class="btn btn-danger">Add Friend</button>
+		</form>
+		<form type="post" asp-area="Hub" asp-page="Events/Index" asp-route-eventID="@Model.Event.ID">
+			<button type="submit" asp-page-handler="LeaveEvent" class="btn btn-danger">Leave Event</button>
+		</form>
 	</div>
 </div>
 

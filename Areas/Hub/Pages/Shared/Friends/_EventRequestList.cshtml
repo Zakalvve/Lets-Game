@@ -1,0 +1,12 @@
+﻿@using LetsGame.Areas.Identity.Data
+@using LetsGame.Services
+@using LetsGame.Data.Models
+@model List<LetsGame_EventInvite>
+
+<ul class="list-group-flush p-0">
+	@foreach (var invite in Model) {
+		<li onclick="displayAcceptEventRequest(&quot;.list-group-item&quot;, this, @invite.EventID)" class="list-group-item">
+			<h5 class="col lead">@invite.Event.EventName</h5>
+		</li>
+	}
+</ul>

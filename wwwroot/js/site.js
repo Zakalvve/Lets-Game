@@ -51,3 +51,37 @@ function vote(pollId, voteId, url) {
         }
     });
 }
+
+function displayUsers(username) {
+    if (username.length == 0) {
+        $("#search-results").html("");
+        $("#search-results").css("border", "0");
+    }
+    $("#search-results").load(`/Hub/Friends/Index?handler=SearchPartial&input=${username}`);
+    $("#search-results").css("border", "1");
+}
+
+function displayFriends(username, id) {
+    if (username.length == 0) {
+        $("#search-results").html("");
+        $("#search-results").css("border", "0");
+    }
+    $("#search-results").load(`/Hub/Events/Index?handler=SearchPartial&input=${username}&eventID=${id}`);
+    $("#search-results").css("border", "1");
+}
+
+function submitEventInvite() {
+    value = $("#selection").val();
+    $("#id-value").val($('#users [value="' + value + '"]').data('value'));
+    console.log($('#users [value="' + value + '"]').data('value'));
+    $("#page-form").submit();
+}
+
+function displayParticipants(username, id) {
+    if (username.length == 0) {
+        $("#search-results").html("");
+        $("#search-results").css("border", "0");
+    }
+    $("#search-results").load(`/Hub/Events/Index?handler=SearchResultPartial&input=${username}&eventID=${id}`);
+    $("#search-results").css("border", "1");
+}

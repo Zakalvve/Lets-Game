@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
+using LetsGame.Services;
 
 namespace LetsGame.Areas.Hub.Pages
 {
@@ -15,17 +16,24 @@ namespace LetsGame.Areas.Hub.Pages
     {
         //CONSTRUCTOR
         public EventModel(ILetsGame_EventManager eventManager, 
-                          UserManager<LetsGame_User> userManager) 
+                          UserManager<LetsGame_User> userManager,
+                          IFriendsService friendsManager) 
         {
             _eventManager = eventManager;
             _userManager = userManager;
+            _friendsManager = friendsManager;
         }
 
 		//MANAGERS
 		private readonly ILetsGame_EventManager _eventManager;
 		private readonly UserManager<LetsGame_User> _userManager;
+        private readonly IFriendsService _friendsManager;
 
 		//DATA
+		/// <summary>
+		///     A message that is displayed by the status message partial of the current page
+		/// </summary>
+		public string StatusMessage { get; set; }
 		public UserEventsData PageData { get; private set; }
         public string EventName { get; set; }
 
@@ -61,7 +69,7 @@ namespace LetsGame.Areas.Hub.Pages
             if (PageData.IsValid && success) {
                 return true;
             } else {
-                PageData.StatusMessage = "Error: No event data could be loaded";
+                StatusMessage = "Error: No event data could be loaded";
                 return false;
             }
         }
@@ -168,6 +176,54 @@ namespace LetsGame.Areas.Hub.Pages
             if (!success) return new PartialViewResult();
 
 			return Partial("_Poll",PageData.Poll);
+		}
+        public async Task<PartialViewResult> OnGetSearchPartial(string input, long eventID) {
+			var user = await _userManager.GetUserAsync(User);
+
+			return Partial("_UserSearchResults",GetPossibleUsers(user, input, eventID));
+        }
+		public List<FriendData> GetPossibleUsers(LetsGame_User user, string input, long eventID) {
+
+
+            if (input == null) input = string.Empty;
+			//Gets a list of ID's for users that are already in a relationship with the current user.
+			//Used to cross reference generated list and avoid adding a friend twice.
+			var currentParticipants = _eventManager.GetUserEvent(eventID,user.Id).Event.Participants.Select(r => r.Id);
+            
+			//create list of possible users to befriend
+			List<FriendData> users = _friendsManager.GetAllFriends(user)
+				.Where(f => f.Username.ToUpper().StartsWith(input.ToUpper())
+							&& f.ID != user.Id
+							&& !ContainsID(currentParticipants,f.ID)
+                            && !_eventManager.HasInvite(eventID, f.ID))
+				.Select(u => u).ToList();
+
+			return users;
+		}
+        public bool ContainsID(IEnumerable<string>? e, string id) {
+            if (e == null) return false;
+            return e.Contains(id);
+        }
+        public async Task<IActionResult> OnPostEventInvite(string friendID, long eventID) {
+
+            var success = _eventManager.InviteFriend(eventID,friendID);
+
+            if (success) {
+               StatusMessage = "Success: Invite";
+            }
+            return Redirect($"{eventID}");
+        }
+
+        public async Task<IActionResult> OnPostLeaveEvent(long eventID) {
+            var user = await _userManager.GetUserAsync(User);
+            await _eventManager.LeaveEventAsync(eventID,user.Id);
+            await _eventManager.SaveAsync();
+            return Redirect("/Hub/Events");
+        }
+
+		public async Task<PartialViewResult> OnGetSearchResultPartial(string input,long eventID) {
+			var user = await _userManager.GetUserAsync(User);
+			return Partial("_UserSearchResults",GetPossibleUsers(user,input,eventID));
 		}
 	}
 }

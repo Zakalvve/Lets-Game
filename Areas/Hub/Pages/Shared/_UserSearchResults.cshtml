@@ -4,8 +4,8 @@
 @model List<FriendData>
 
 <label for="users">Type to search for your friends</label>
-<datalist id="users" name="friendID">
+<datalist id="users">
     @foreach (var result in Model) {
-        <option data-value="@result.ID" value="@result.Username" class="col btn btn-primary"/>
+        <option data-value="@result.ID" value="@result.Username" class="col btn btn-primary"></option>
     }
 </datalist>
