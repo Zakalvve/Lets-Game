@@ -79,7 +79,7 @@ else {
 			}
 		</div>
 		<form id="page-form" type="post" asp-area="Hub" asp-page="Events/Index">
-			<input id="selection" list="users" onfocus="displayFriends(this.value, @Model.Event.ID)" onkeyup="displayFriends(this.value, @Model.Event.ID)">
+			<input id="selection" list="users" onkeyup="displayFriends(this.value, @Model.Event.ID)">
 			<input id="id-value" type="hidden" name="friendID" />
 			<input type="hidden" name="eventID" value="@Model.Event.ID" />
 			<div id="search-results">

@@ -8,10 +8,9 @@ using System.Reflection.Metadata;
 
 namespace LetsGame.Data
 {
-	//Testing Class
-	//used to initialise the database with new values for testing purposes
-	//purges old test data - adds new test data
-	//this way I always work from a proper state after migrations
+	/// <summary>
+	/// This is an old class that is used to initialize the database with dummy data, it is no longer used or required but useful when setting up a seperate db for testing purposes
+	/// </summary>
 	public static class DbInitialize {
 		public static void Initialize(ApplicationDbContext context) {
 

@@ -24,6 +24,10 @@ namespace LetsGame.Data
 
 
         #region Required
+        /// <summary>
+        /// Establishes the data schema for the database.
+        /// </summary>
+        /// <param name="builder"></param>
         protected override void OnModelCreating(ModelBuilder builder) {
 
             base.OnModelCreating(builder);
