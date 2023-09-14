@@ -49,16 +49,16 @@ I undertook this project as part of my learning asp.net and web app development.
 
 ## State of the project
 
-The project is currently unfinished. I implemented all of the *"core"* functionality. However, some big areas such as user chat and user notifications remain un implemented.
+The project is currently unfinished. I implemented all of the *"core"* functionality. However, some big areas such as user chat and user notifications remain un-implemented.
 
 In addition, much of the code is in need of a refactor. A mechanism/tool for loading data required for UI elements would be good for developing the RESTful API.
 
-Updating the UI would be a hugh must. In fact it might pay to decouple the backend from the front and instead move all the UI stuff client side. Then I could use a clientside framework to create the UI. Some of the features I woul;d like to add include things like a countdown once the event is less than one day away.
+Updating the UI would be a hugh must. In fact it might pay to decouple the backend from the front and instead move all the UI stuff client side. Then I could use a clientside framework to create the UI. I could use something like astro or Next to maintain serverside rendering to improve SEO. Some of the features I would like to add include things like a countdown once the event is less than one day away.
 
-Implementing the ability to fecth games from BGG would make the pols feel more important.
+Implementing the ability to fecth games from BGG (Board game geek has a public API) would make the polls feel more important.
 
 Logic that calculates which games can be played during the event duration would help guide the selection choices of the group.
 
 ## Conclusion
 
-I hope/plan to return to this project in the future. I learned a lot and that was my main goal.
+I hope/plan to return to this project in the future but for now I learned a lot and that was my main goal.
