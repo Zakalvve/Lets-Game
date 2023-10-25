@@ -6,7 +6,7 @@ The idea was inspired by noticing how much time my friends and I would spend dec
 
 ## Scope of Project
 
-I undertook this project as part of my learning asp.net and web app development. For this reason covering some of the most fundemental elements was my true goal and I learned more from this single project than I ever could have from simply reading the docs. 
+I undertook this project as part of my learning ASP.NET and web app development. For this reason covering some of the most fundemental elements was my true goal and I learned more from this single project than I ever could have from simply reading the docs. 
 
 ### Areas I wanted to cover:
 
@@ -18,17 +18,17 @@ I undertook this project as part of my learning asp.net and web app development.
     - [x] Layout pages
     - [x] Routing
     - [x] Dependency Injection
-      - [x] CRUD Event Manager Class (IEventManager)
-      - [x] CRUD Friend Manager Class (IFriendManager)
+      - [x] CRUD Event Manager Class
+      - [x] CRUD Friend Manager Class
     - [x] Site Areas
-    - [ ] REST API: This is not fullt implemented it but I began to implement it as a way of handing AJAX requests.
-    - [ ] Allow Interaction with BGG API: https://boardgamegeek.com/wiki/page/BGG_XML_API2. Users can manage collections of games.
+    - [ ] REST API: This is not fully implemented yet. Original intention was for data to be accesible for an associated Discord bot.
+    - [ ] Allow Interaction with BGG API: https://boardgamegeek.com/wiki/page/BGG_XML_API2. Users can manage collections of games they have or want to play.
     - [ ] Bussiness Logic
       - [x] Create Database Schema
       - [x] Create Object Models for Entity Framework.
-      - [ ] User Notification System: One of the first things I'd add. Currently friend requests and event requests are handled in a satificing way.
+      - [ ] User Notification System: One of the first things I'd add.
       - [x] Create Events, View Event, Modify Event if event creator
-      - [ ] Event Roles: Creator can assign trusted permissions to come participants. Would like to add this feature.
+      - [ ] Event Roles: Creator can assign trusted permissions to some participants. Would like to add this feature.
       - [x] Invite to Events accept invites/join Events
       - [x] Create, Vote on Polls
       - [ ] Notify event participants of updates regarding events.
@@ -39,7 +39,7 @@ I undertook this project as part of my learning asp.net and web app development.
     
 ### I even learned a few things I didn't set out to:
 
-- AJAX Requests
+- AJAX
 - JQuery
 - DOM manipulation
       
@@ -51,9 +51,9 @@ I undertook this project as part of my learning asp.net and web app development.
 
 The project is currently unfinished. I implemented all of the *"core"* functionality. However, some big areas such as user chat and user notifications remain un-implemented.
 
-In addition, much of the code is in need of a refactor. A mechanism/tool for loading data required for UI elements would be good for developing the RESTful API.
+In addition, much of the code is in need of a refactor. My lack of knowledge at the time means that the database queries are not properly optimised.
 
-Updating the UI would be a hugh must. In fact it might pay to decouple the backend from the front and instead move all the UI stuff client side. Then I could use a clientside framework to create the UI. I could use something like astro or Next to maintain serverside rendering to improve SEO. Some of the features I would like to add include things like a countdown once the event is less than one day away.
+Updating the UI would be a huge must. I might consider a clientside framework to create the UI.
 
 Implementing the ability to fecth games from BGG (Board game geek has a public API) would make the polls feel more important.
 
